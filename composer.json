@@ -1,0 +1,22 @@
+{
+  "name": "svsoft/yii2-lib",
+  "description": "Lib for Yii2 form svsoft",
+  "type": "yii2-extension",
+  "keywords": ["yii2","extension","module"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Viktor Shiryakov",
+      "email": "shiryakovv@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "yiisoft/yii2": "*"
+  },
+  "autoload": {
+    "psr-4": {
+        "svsoft\\yii\\": ""
+    }
+  }
+}

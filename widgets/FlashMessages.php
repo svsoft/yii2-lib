@@ -42,6 +42,12 @@ class FlashMessages extends \yii\bootstrap\Widget
 
     public $containerStyle = 'position: fixed; top: 20px; right: 20px; z-index: 1000000';
 
+    public $pjaxRefresh = true;
+
+    public $pjaxRefreshAttribute = 'data-refresh-flash-messages';
+
+    public $timeout = 5000;
+
     public $alertTypes = [
         'error'   => 'alert-danger',
         'danger'  => 'alert-danger',
@@ -58,6 +64,13 @@ class FlashMessages extends \yii\bootstrap\Widget
     public function init()
     {
         parent::init();
+
+        $this->timeout = (int)$this->timeout;
+
+        if ($this->timeout<1000)
+        {
+            $this->timeout = 1000;
+        }
 
         $session = Yii::$app->session;
         $flashes = $session->getAllFlashes();
@@ -86,21 +99,54 @@ class FlashMessages extends \yii\bootstrap\Widget
             }
         }
 
-        echo Html::tag('div', $html, ['id'=>$this->containerId, 'style'=>$this->containerStyle]);
+        $html = Html::tag('div', $html, ['id'=>$this->containerId, 'style'=>$this->containerStyle]);
+
+        if ($this->pjaxRefresh)
+        {
+            \yii\widgets\Pjax::begin(['id'=>$this->containerId . '-pjax', 'linkSelector'=>false, 'enablePushState' => false]);
+            echo $html;
+            \yii\widgets\Pjax::end();
+        }
+        else
+        {
+            echo $html;
+        }
 
         $this->view->registerJs("
             $(document).ready(function(){
-                setTimeout(function(){                    
-                    $('#{$this->containerId} .alert').animate({opacity:0}, 1000, function(){
-                        $(this).remove();
+                
+                var pjaxRefreshAttribute = {$this->pjaxRefresh}?'{$this->pjaxRefreshAttribute}':false;
+                
+                var timeout = $this->timeout;
+                var timeoutOpacity = 1000;
+
+                var init = function(){
+                    setTimeout(function(){                    
+                        $('#{$this->containerId} .alert').animate({opacity:0}, timeoutOpacity, function(){
+                            $(this).remove();
+                        });
+                    }, timeout - timeoutOpacity);
+                };
+                
+                if ($('#{$this->containerId} .alert').size())
+                {
+                    init();
+                }
+                
+                if (pjaxRefreshAttribute)
+                {
+                    var pjaxContainers = $('['+pjaxRefreshAttribute+']');
+                    
+                    pjaxContainers.off('pjax:end');
+                    
+                    pjaxContainers.on('pjax:end', function() {
+                        $.pjax.reload({container:'#{$this->containerId}-pjax'});
                     });
-                }, 4000);
-                
-                $('[data-refresh-flashes=1]').off('pjax:end');
-                
-                $('[data-refresh-flashes=1]').on('pjax:end', function() {
-                    $.pjax.reload({container:'#{$this->containerId}-pjax'});
-                });
+                    
+                    $('#{$this->containerId}-pjax').on('pjax:end', function(){
+                        init();
+                    });     
+                }
             });
         ");
     }

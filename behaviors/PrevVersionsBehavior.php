@@ -122,6 +122,9 @@ class PrevVersionsBehavior extends Behavior
     {
         $dirPath = $this->getObjectDirPath();
 
+        if (!file_exists($dirPath))
+            return [];
+
         $files = FileHelper::findFiles($dirPath);
 
         foreach($files as $file)

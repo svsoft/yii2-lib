@@ -78,7 +78,7 @@ class FileBehavior extends Behavior
      *
      * @return FileAttribute
      */
-    public function file($attr)
+    public function fileAttribute($attr)
     {
         if (!ArrayHelper::keyExists($attr, $this->_files))
         {
@@ -106,7 +106,7 @@ class FileBehavior extends Behavior
         if (!$uploadFile)
             return;
 
-        $file = $this->file($attr);
+        $file = $this->fileAttribute($attr);
 
         $this->owner->$attr = $uploadFile;
 
@@ -162,7 +162,7 @@ class FileBehavior extends Behavior
         {
             $attr = $attribute['attribute'];
 
-            $file = $this->owner->file($attr);
+            $file = $this->owner->fileAttribute($attr);
 
             if ($file->exists())
                 $file->deleteFile();
@@ -185,7 +185,7 @@ class FileBehavior extends Behavior
         {
             $attr = $attribute['attribute'];
 
-            $file = $this->file($attr);
+            $file = $this->fileAttribute($attr);
 
             $attrValue = $file->filename;
 

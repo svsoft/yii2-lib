@@ -11,16 +11,11 @@
 
 namespace svsoft\yii\behaviors;
 
-use svsoft\yii\behaviors\FileAttribute;
 use Yii;
 use yii\base\Behavior;
 use yii\base\Exception;
-use yii\base\Model;
-use yii\behaviors\AttributeBehavior;
 use yii\db\ActiveRecord;
-use yii\db\BaseActiveRecord;
 use yii\helpers\ArrayHelper;
-use yii\validators\UniqueValidator;
 use yii\web\UploadedFile;
 
 class FileBehavior extends Behavior
@@ -30,7 +25,7 @@ class FileBehavior extends Behavior
     /**
      * @var FileAttribute[]
      */
-    private $_files = [];
+    private $_fileAttributes = [];
 
     public function init()
     {
@@ -41,20 +36,9 @@ class FileBehavior extends Behavior
             $this->attributes = [$this->attributes];
         }
 
-        $default = [
-            'attribute'=>'image',
-            'class'=>FileAttribute::className(),
-            'dir'=>'upload',
-            'callbackFilename' =>
-                function(UploadedFile $uploadFile, $model)
-                {
-                    return md5(rand(0, 1000000). time() . $uploadFile->name) . '.' . $uploadFile->extension;
-                },
-        ];
-
-        foreach($this->attributes as &$attribute)
+        foreach($this->attributes as $config)
         {
-            $attribute = ArrayHelper::merge($default, $attribute);
+            $this->_fileAttributes[$config['attribute']] = $this->createFileAttribute($config);
         }
     }
 
@@ -80,25 +64,31 @@ class FileBehavior extends Behavior
      */
     public function fileAttribute($attr)
     {
-        if (!ArrayHelper::keyExists($attr, $this->_files))
+        if (!ArrayHelper::keyExists($attr, $this->_fileAttributes))
         {
-            $attributeConfig = $this->getAttributeByName($attr);
-
-            //$config = ArrayHelper::filter($attributeConfig, ['class','dirPath','webDirPath']);
-
-            $this->_files[$attr] = $this->createFileAttribute($attributeConfig);
+            throw new Exception('Attribute "'.$attr.'" not found');
         }
 
         if (is_string($this->owner->$attr))
-            $this->_files[$attr]->filename = $this->owner->$attr;
+            $this->_fileAttributes[$attr]->filename = $this->owner->$attr;
 
-        return $this->_files[$attr];
+        return $this->_fileAttributes[$attr];
+    }
+
+    public function getFileAttributes()
+    {
+        foreach($this->_fileAttributes as $attribute=>$fileAttribute)
+        {
+            $this->fileAttribute($attribute);
+        }
+
+        return $this->_fileAttributes;
     }
 
     /**
-     * Согружает в модель объекты класса UploadedFile
+     * загружает в модель объекты класса UploadedFile
      *
-     * @param $attr название файлового атрибута
+     * @param string $attr - название файлового атрибута
      * @param UploadedFile|null $uploadFile
      */
     public function loadFile($attr, UploadedFile $uploadFile = null)
@@ -113,59 +103,12 @@ class FileBehavior extends Behavior
         $file->setUploadFile($uploadFile);
     }
 
-
-    public function beforeValidate()
-    {
-        /**
-         * @var ActiveRecord $model
-         * @var Model $fileAttribute
-         *
-         */
-        $model = $this->owner;
-
-        foreach($this->attributes as &$attribute)
-        {
-            $attr = $attribute['attribute'];
-
-            $fileAttribute = $model->$attr;
-
-            if($fileAttribute instanceof FileAttribute && !$fileAttribute->validate())
-            {
-                $errors = $fileAttribute->getErrors('uploadedFile');
-
-                foreach($errors as $error)
-                    $model->addError($attr, $error);
-            }
-        }
-    }
-
-    public function setUploadFile($attrName, UploadedFile $file)
-    {
-        //$fileAttribute = $this->owner->getAttribute($attrName);
-        $fileAttribute = $this->owner->$attrName;
-
-        if (!$fileAttribute)
-        {
-            $attribute = $this->getAttributeByName($attrName);
-
-            $fileAttribute = $this->createFileAttribute($attribute);
-
-            $this->owner->setAttribute($attrName, $fileAttribute);
-        }
-
-        $fileAttribute->uploadedFile = $file;
-    }
-
     public function beforeDelete()
     {
-        foreach($this->attributes as $attribute)
+        foreach($this->getFileAttributes() as $fileAttribute)
         {
-            $attr = $attribute['attribute'];
-
-            $file = $this->owner->fileAttribute($attr);
-
-            if ($file->exists())
-                $file->deleteFile();
+            if ($fileAttribute->exists())
+                $fileAttribute->deleteFile();
         }
     }
 
@@ -181,48 +124,29 @@ class FileBehavior extends Behavior
             return;
 
         // Проверяем все файловые атрибуты, чтоб удалить файлы с диска
-        foreach($this->attributes as $attribute)
+        foreach($this->getFileAttributes() as $fileAttribute)
         {
-            $attr = $attribute['attribute'];
+            $attr = $fileAttribute->attribute;
 
-            $file = $this->fileAttribute($attr);
+            $attrValue = $fileAttribute->filename;
 
-            $attrValue = $file->filename;
-
-            if ($file->getUploadFile())
+            if ($fileAttribute->getUploadFile())
             {
-                $filename = call_user_func($attribute['callbackFilename'], $file->getUploadFile(), $model);
-                $attrValue = $file->save($filename);
+                $filename = call_user_func($fileAttribute->callbackFilename, $fileAttribute->getUploadFile(), $model);
+                $attrValue = $fileAttribute->save($filename);
             }
 
             $attrOldValue = $model->getOldAttribute($attr);
 
             if ($attrValue != $attrOldValue && $attrOldValue)
             {
-                $fileOld = clone $file;
+                $fileOld = clone $fileAttribute;
                 $fileOld->filename = $attrOldValue;
                 $fileOld->deleteFile();
             }
 
             $model->setAttribute($attr, $attrValue);
         }
-    }
-
-    /**
-     * mark file to delete on save
-     *
-     * @param $attr
-     *
-     * @throws Exception
-     */
-    public function setDeletingFile($attr)
-    {
-        if (!in_array($attr, $this->fileAttributes))
-            throw new Exception('Attribute "'.$attr.'" not found');
-
-        $fileAttribute = $this->owner->getAttribute($attr);
-
-        $fileAttribute->deletingFile = true;
     }
 
     /**
@@ -245,6 +169,7 @@ class FileBehavior extends Behavior
     /**
      * Returns uploaded file name on  basis of function callbackFilename
      *
+     * @param string $attribute
      * @param UploadedFile $uploadedFile
      *
      * @return string
@@ -256,12 +181,21 @@ class FileBehavior extends Behavior
         return $callback($uploadedFile, $this->owner);
     }
 
-    protected function createFileAttribute($attribute)
+    protected function createFileAttribute($config)
     {
-        $config = array_diff_key($attribute, array_flip(['callbackFilename','attribute']));
+        $default = [
+            'class'=>FileAttribute::className(),
+            'dir'=>'upload',
+            'callbackFilename' =>
+                function(UploadedFile $uploadFile, $model = null)
+                {
+                    return md5(rand(0, 1000000). time() . $uploadFile->name) . '.' . $uploadFile->extension;
+                },
+        ];
 
-        $fileAttribute = Yii::createObject($config);
+        $config = ArrayHelper::merge($default, $config);
 
-        return $fileAttribute;
+
+        return Yii::createObject($config);
     }
 }

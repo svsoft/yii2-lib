@@ -42,6 +42,12 @@ class FileInput extends \yii\bootstrap\Widget
     public $src;
 
     /**
+     * показывать чекбокс для удаления
+     * @var bool
+     */
+    public $showDeleteControl;
+
+    /**
      * @var array the options for rendering the close button tag.
      */
     public $closeButton = [];
@@ -58,6 +64,10 @@ class FileInput extends \yii\bootstrap\Widget
     public function init()
     {
         parent::init();
+
+        if ($this->showDeleteControl === null)
+            $this->showDeleteControl = $this->src ? true : false;
+
     }
 
     public function run()
@@ -95,7 +105,7 @@ class FileInput extends \yii\bootstrap\Widget
             '<div class="form-group">'.
                 Html::img($this->src, ['width'=>200]).
 
-                ($this->src ? Html::activeCheckbox($this->model, $this->field, ['uncheck' => false, 'label'=>'Удалить','value'=>'']) : '') .
+                ($this->showDeleteControl ? Html::activeCheckbox($this->model, $this->field, ['uncheck' => false, 'label'=>'Удалить', 'value'=>'']) : '') .
                 Html::error($model, $this->field, ['class'=>'help-block help-block-error']).
             '</div>';
 

@@ -11,9 +11,8 @@ namespace svsoft\yii\helpers;
 use yii\data\Pagination;
 use yii\db\ActiveQuery;
 
-class Query
+class QueryHelper
 {
-
     /**
      * @param $dataProvide ActiveQuery
      * @param $pageSize - count items on page

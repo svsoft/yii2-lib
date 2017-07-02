@@ -13,6 +13,12 @@ use yii\base\BootstrapInterface;
  */
 class MainModule extends \yii\base\Module implements BootstrapInterface
 {
+    /**
+     * Список модулей у которых будет админка
+     *
+     * @var array
+     */
+    public $adminModules = [];
 
     /**
      * MainModule constructor.
@@ -48,9 +54,11 @@ class MainModule extends \yii\base\Module implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        Yii::setAlias('@webroot', '@app/web');
+        Yii::setAlias('@web', '/');
+
         Yii::setAlias('@svs-lib', '@vendor/svsoft/yii2-lib');
         Yii::setAlias('@svs-main', '@svs-lib/modules/main');
-
 
         Yii::setAlias('@upload', '@app/web/upload');
         Yii::setAlias('@files', '@upload/files');

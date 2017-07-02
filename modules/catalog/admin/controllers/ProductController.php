@@ -2,24 +2,19 @@
 
 namespace svsoft\yii\modules\catalog\admin\controllers;
 
-use svsoft\yii\modules\main\files\FileAttributeHelper;
-use svsoft\yii\modules\main\files\models\UploadForm;
-use svsoft\yii\modules\catalog\CatalogModule;
 use svsoft\yii\modules\catalog\components\CatalogHelper;
 use Yii;
-use svsoft\yii\modules\catalog\models\CatalogCategory;
-use yii\data\ActiveDataProvider;
-use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
+use svsoft\yii\modules\catalog\models\Product;
+use svsoft\yii\modules\catalog\models\ProductSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
 /**
- * CategoryController implements the CRUD actions for CatalogCategory model.
+ * ProductController implements the CRUD actions for Product model.
  */
-class CategoryController extends Controller
+class ProductController extends Controller
 {
     /**
      * @inheritdoc
@@ -37,22 +32,22 @@ class CategoryController extends Controller
     }
 
     /**
-     * Lists all CatalogCategory models.
+     * Lists all Product models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => CatalogCategory::find(),
-        ]);
+        $searchModel = new ProductSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single CatalogCategory model.
+     * Displays a single Product model.
      * @param integer $id
      * @return mixed
      */
@@ -64,13 +59,14 @@ class CategoryController extends Controller
     }
 
     /**
-     * Creates a new CatalogCategory model.
+     * Creates a new Product model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new CatalogCategory();
+        $model = new Product();
+
         $categories = CatalogHelper::getCategoryList(false);
 
         if ($model->load(Yii::$app->request->post()))
@@ -79,17 +75,19 @@ class CategoryController extends Controller
             $model->getUploadForm()->uploadedFiles = UploadedFile::getInstances($model->getUploadForm(), 'uploadedFiles');
 
             if ($model->save())
-                return $this->redirect(['view', 'id' => $model->category_id]);
+                return $this->redirect(['view', 'id' => $model->product_id]);
+
+            var_dump($model->errors);
         }
 
         return $this->render('create', [
             'model' => $model,
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 
     /**
-     * Updates an existing CatalogCategory model.
+     * Updates an existing Product model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -99,31 +97,19 @@ class CategoryController extends Controller
         $model = $this->findModel($id);
 
         $categories = CatalogHelper::getCategoryList(false);
-        unset($categories[$id]);
 
-        $modelUploadForm = $model->getUploadForm();
-
-        if ($model->load(Yii::$app->request->post()))
-        {
-            $modelUploadForm->load(Yii::$app->request->post());
-            $modelUploadForm->uploadedFiles = UploadedFile::getInstances($modelUploadForm, 'uploadedFiles');
-
-            if ($model->save())
-            {
-                $modelUploadForm->save();
-
-                return $this->redirect(['view', 'id' => $model->category_id]);
-            }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->product_id]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+                'categories' => $categories,
+            ]);
         }
-
-        return $this->render('update', [
-            'model' => $model,
-            'categories'=>$categories,
-        ]);
     }
 
     /**
-     * Deletes an existing CatalogCategory model.
+     * Deletes an existing Product model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -136,15 +122,15 @@ class CategoryController extends Controller
     }
 
     /**
-     * Finds the CatalogCategory model based on its primary key value.
+     * Finds the Product model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return CatalogCategory the loaded model
+     * @return Product the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = CatalogCategory::findOne($id)) !== null) {
+        if (($model = Product::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

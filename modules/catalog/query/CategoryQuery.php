@@ -10,6 +10,6 @@ class CategoryQuery extends ActiveQuery
 {
     public function active()
     {
-        $this->andWhere(['active'=>true]);
+        return $this->andWhere(['active'=>true]);
     }
 }

@@ -131,7 +131,6 @@ class UploadForm extends Model
     {
         $this->upload();
         $this->delete();
-
     }
 
     // Удаляет файлы с диска
@@ -164,7 +163,7 @@ class UploadForm extends Model
         {
             $file = [
                 'name' => $name,
-                'unlink'=> (bool)$this->unlinks[$key],
+                'unlink'=> (bool)ArrayHelper::getValue($this->unlinks, $key, false),
                 'new'=>false,
                 'src'=>$web . '/' . $name,
                 'id'=>$key
@@ -207,7 +206,7 @@ class UploadForm extends Model
      */
     public function setFiles($files)
     {
-        $this->names = $files;
+        $this->names = $files ? $files : [];
         $this->unlinks = [];
     }
 

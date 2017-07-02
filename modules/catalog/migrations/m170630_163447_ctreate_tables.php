@@ -18,12 +18,30 @@ class m170630_163447_ctreate_tables extends Migration
             'created'=> $this->integer()->notNull(),
             'updated'=> $this->integer()->notNull(),
         ]);
-
         $this->addForeignKey('cc_parent_id', 'catalog_category', 'parent_id', 'catalog_category', 'category_id', 'RESTRICT');
+
+        // Таблица товаров
+        $this->createTable('catalog_product', [
+            'product_id' => $this->primaryKey()->unsigned(),
+            'category_id' => $this->integer()->unsigned(),
+            'name'=> $this->string()->notNull(),
+            'slug'=> $this->string(),
+            'description'=> $this->text(),
+            'images'=> $this->text(),
+            'active'=> $this->boolean()->unsigned(),
+            'created'=> $this->integer()->notNull(),
+            'updated'=> $this->integer()->notNull(),
+            'price'=> $this->float(),
+            'count'=> $this->float(),
+            'measure'=> $this->string(),
+        ]);
+        $this->addForeignKey('cp_category_id', 'catalog_product', 'category_id', 'catalog_category', 'category_id', 'RESTRICT');
+
     }
 
     public function safeDown()
     {
+        $this->dropTable('catalog_product');
         $this->dropTable('catalog_category');
 
         return true;

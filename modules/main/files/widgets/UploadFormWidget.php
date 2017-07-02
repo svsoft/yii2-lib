@@ -36,6 +36,8 @@ class UploadFormWidget extends \yii\bootstrap\Widget
 
         UploadFormAsset::register($view);
 
+        $items = [];
+
         foreach($model->files as $key=>$file)
             $items[] = $this->render('upload-form-widget-img-item', ['file' => $file, 'model'=>$model]);
 

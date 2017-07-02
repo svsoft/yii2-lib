@@ -2,6 +2,7 @@
 
 namespace svsoft\yii\modules\main\admin;
 
+use svsoft\yii\modules\main\components\BaseAdminModule;
 use yii\filters\AccessControl;
 use yii\web\AssetManager;
 use yii\web\ErrorHandler;
@@ -9,35 +10,12 @@ use yii\web\ErrorHandler;
 /**
  * admin module definition class
  */
-class AdminModule extends \yii\base\Module
+class AdminModule extends BaseAdminModule
 {
-    public $layout = '@svs-main/admin/views/layouts/main.php';
 
     /**
      * @inheritdoc
      */
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-//                        'matchCallback' => function ($rule, $action) {
-//                            return \Yii::$app->user->identity && \Yii::$app->user->identity->isAdmin();
-//                        }
-
-                    ],
-                ],
-            ],
-        ];
-    }
 
     /**
      * @inheritdoc

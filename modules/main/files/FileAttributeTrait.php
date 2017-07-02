@@ -27,13 +27,13 @@ trait FileAttributeTrait
     public $uploadForms = [];
 
     /**
-     * Установить название файлового атрибута, и возвращает $this для дальнейшей работы
+     * Установить название файлового атрибута с которым работают другие функции трейта, и возвращает $this для дальнейшей работы
      *
      * @param $attribute
      *
      * @return FileAttributeTrait $this
      */
-    public function fileAttribute($attribute)
+    public function setFileAttribute($attribute)
     {
         $this->_fileAttribute = $attribute;
 

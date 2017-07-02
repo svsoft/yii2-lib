@@ -2,10 +2,12 @@
 
 namespace svsoft\yii\modules\catalog\admin;
 
+use svsoft\yii\modules\main\components\BaseAdminModule;
+
 /**
  * admin module definition class
  */
-class AdminModule extends \svsoft\yii\modules\main\admin\AdminModule
+class AdminModule extends BaseAdminModule
 {
     /**
      * @inheritdoc

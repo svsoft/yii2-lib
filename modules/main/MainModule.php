@@ -77,7 +77,7 @@ class MainModule extends \yii\base\Module implements BootstrapInterface
                 $migrateConfig['class'] = 'yii\console\controllers\MigrateController';
 
             // Список модулей для миграций
-            foreach(['main', 'catalog'] as $moduleId)
+            foreach($this->adminModules as $moduleId)
             {
                 $path = Yii::getAlias('@svs-lib/modules') . '/' . $moduleId;
                 $namespace = 'svsoft\yii\modules\\' . $moduleId;

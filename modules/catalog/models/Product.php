@@ -24,7 +24,7 @@ use yii\behaviors\TimestampBehavior;
  * @property double $count
  * @property string $measure
  *
- * @property CatalogCategory $category
+ * @property Category $category
  */
 class Product extends \yii\db\ActiveRecord
 {
@@ -49,7 +49,7 @@ class Product extends \yii\db\ActiveRecord
             [['description', 'images'], 'string'],
             [['price', 'count'], 'number'],
             [['name', 'slug', 'measure'], 'string', 'max' => 255],
-            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => CatalogCategory::className(), 'targetAttribute' => ['category_id' => 'category_id']],
+            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'category_id']],
         ];
     }
 
@@ -100,6 +100,6 @@ class Product extends \yii\db\ActiveRecord
      */
     public function getCategory()
     {
-        return $this->hasOne(CatalogCategory::className(), ['category_id' => 'category_id']);
+        return $this->hasOne(Category::className(), ['category_id' => 'category_id']);
     }
 }

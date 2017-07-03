@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model svsoft\yii\modules\catalog\models\CatalogCategory */
+/* @var $model svsoft\yii\modules\catalog\models\Category */
 
 
 $this->title = 'Create Catalog Category';

@@ -20,12 +20,12 @@ use yii\behaviors\TimestampBehavior;
  * @property string $images
  * @property integer $active
  *
- * @property CatalogCategory $parent
- * @property CatalogCategory[] $catalogCategories
+ * @property Category $parent
+ * @property Category[] $categories
  * @property Product[] $products
  * @property Product[] $activeProducts
  */
-class CatalogCategory extends \yii\db\ActiveRecord
+class Category extends \yii\db\ActiveRecord
 {
     use FileAttributeTrait;
     use SluggableTrait;
@@ -47,7 +47,7 @@ class CatalogCategory extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['images'], 'string'],
             [['name', 'slug'], 'string', 'max' => 255],
-            [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => CatalogCategory::className(), 'targetAttribute' => ['parent_id' => 'category_id']],
+            [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['parent_id' => 'category_id']],
         ];
     }
 
@@ -92,15 +92,15 @@ class CatalogCategory extends \yii\db\ActiveRecord
      */
     public function getParent()
     {
-        return $this->hasOne(CatalogCategory::className(), ['category_id' => 'parent_id']);
+        return $this->hasOne(Category::className(), ['category_id' => 'parent_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCatalogCategories()
+    public function getCategories()
     {
-        return $this->hasMany(CatalogCategory::className(), ['parent_id' => 'category_id']);
+        return $this->hasMany(Category::className(), ['parent_id' => 'category_id']);
     }
 
     /**

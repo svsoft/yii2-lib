@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model svsoft\yii\modules\catalog\models\CatalogCategory */
+/* @var $model svsoft\yii\modules\catalog\models\Category */
 
 $this->title = 'Update Catalog Category: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Catalog Categories', 'url' => ['index']];

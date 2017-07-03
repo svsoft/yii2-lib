@@ -7,7 +7,7 @@ use svsoft\yii\modules\main\files\models\UploadForm;
 use svsoft\yii\modules\catalog\CatalogModule;
 use svsoft\yii\modules\catalog\components\CatalogHelper;
 use Yii;
-use svsoft\yii\modules\catalog\models\CatalogCategory;
+use svsoft\yii\modules\catalog\models\Category;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -17,7 +17,7 @@ use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
 /**
- * CategoryController implements the CRUD actions for CatalogCategory model.
+ * CategoryController implements the CRUD actions for Category model.
  */
 class CategoryController extends Controller
 {
@@ -37,13 +37,13 @@ class CategoryController extends Controller
     }
 
     /**
-     * Lists all CatalogCategory models.
+     * Lists all Category models.
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => CatalogCategory::find(),
+            'query' => Category::find(),
         ]);
 
         return $this->render('index', [
@@ -52,7 +52,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Displays a single CatalogCategory model.
+     * Displays a single Category model.
      * @param integer $id
      * @return mixed
      */
@@ -64,13 +64,13 @@ class CategoryController extends Controller
     }
 
     /**
-     * Creates a new CatalogCategory model.
+     * Creates a new Category model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new CatalogCategory();
+        $model = new Category();
         $categories = CatalogHelper::getCategoryList(false);
 
         if ($model->load(Yii::$app->request->post()))
@@ -89,7 +89,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Updates an existing CatalogCategory model.
+     * Updates an existing Category model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -123,7 +123,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Deletes an existing CatalogCategory model.
+     * Deletes an existing Category model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -136,15 +136,15 @@ class CategoryController extends Controller
     }
 
     /**
-     * Finds the CatalogCategory model based on its primary key value.
+     * Finds the Category model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return CatalogCategory the loaded model
+     * @return Category the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = CatalogCategory::findOne($id)) !== null) {
+        if (($model = Category::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

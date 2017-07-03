@@ -12,16 +12,18 @@ class BaseModule extends \yii\base\Module
 {
     public function __construct($id, $parent = null, $config = [])
     {
-        $path = Yii::getAlias('@svs-lib/modules/' . $id);
 
-        $namespace = 'svsoft\yii\modules\\' . $id;
 
-        $configFilePath = $path  . '/config/config.php';
+        $configFilePath = $this->basePath  . '/config/config.php';
 
         if (file_exists($configFilePath))
         {
             $config = ArrayHelper::merge($config, require ($configFilePath));
         }
+
+        $class = get_class($this);
+        $strRev = strrev($class);
+        $namespace = strrev(substr($strRev, strpos($strRev, '\\', 0) + 1));
 
         $config = ArrayHelper::merge($config, [
             'modules'=>[

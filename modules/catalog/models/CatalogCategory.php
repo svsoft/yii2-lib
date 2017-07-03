@@ -5,6 +5,7 @@ namespace svsoft\yii\modules\catalog\models;
 use svsoft\yii\modules\catalog\query\CategoryQuery;
 use svsoft\yii\modules\main\files\FileAttributeBehavior;
 use svsoft\yii\modules\main\files\FileAttributeTrait;
+use svsoft\yii\traits\SluggableTrait;
 use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -21,10 +22,13 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property CatalogCategory $parent
  * @property CatalogCategory[] $catalogCategories
+ * @property Product[] $products
+ * @property Product[] $activeProducts
  */
 class CatalogCategory extends \yii\db\ActiveRecord
 {
     use FileAttributeTrait;
+    use SluggableTrait;
     /**
      * @inheritdoc
      */
@@ -106,5 +110,21 @@ class CatalogCategory extends \yii\db\ActiveRecord
     static public function find()
     {
         return Yii::createObject(CategoryQuery::className(), [get_called_class()]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProducts()
+    {
+        return $this->hasMany(Product::className(), ['category_id' => 'category_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActiveProducts()
+    {
+        return $this->getProducts()->andWhere(['active'=>1]);
     }
 }

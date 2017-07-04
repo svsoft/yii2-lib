@@ -3,6 +3,8 @@
 namespace svsoft\yii\modules\properties\models\data;
 
 use Yii;
+use yii\base\Exception;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "property_value".
@@ -21,6 +23,7 @@ use Yii;
  */
 class PropertyValue extends \yii\db\ActiveRecord
 {
+
     /**
      * @inheritdoc
      */

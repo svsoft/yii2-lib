@@ -4,18 +4,16 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model svsoft\yii\modules\properties\models\PropertyObjectType */
+/* @var $model svsoft\yii\modules\properties\models\data\PropertyModelType */
 
-$this->title = 'Create Property Object Type';
-$this->params['breadcrumbs'][] = ['label' => 'Property Object Types', 'url' => ['index']];
+$this->title = 'Create Property Model Type';
+$this->params['breadcrumbs'][] = ['label' => 'Property Model Types', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="property-object-type-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="property-model-type-create">
 
     <?= $this->render('_form', [
-        'model' => $model,
+    'model' => $model,
     ]) ?>
 
 </div>

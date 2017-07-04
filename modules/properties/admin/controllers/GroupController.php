@@ -3,15 +3,14 @@
 namespace svsoft\yii\modules\properties\admin\controllers;
 
 use Yii;
-use svsoft\yii\modules\properties\models\PropertyGroup;
+use svsoft\yii\modules\properties\models\data\PropertyGroup;
 use svsoft\yii\modules\properties\models\PropertyGroupSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\behaviors\SluggableBehavior;
 
 /**
- * PropertyGroupController implements the CRUD actions for PropertyGroup model.
+ * GroupController implements the CRUD actions for PropertyGroup model.
  */
 class GroupController extends Controller
 {
@@ -27,7 +26,6 @@ class GroupController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-
         ];
     }
 
@@ -123,5 +121,4 @@ class GroupController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }

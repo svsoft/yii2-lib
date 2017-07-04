@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use \yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model svsoft\yii\modules\catalog\models\Product */
@@ -11,6 +12,8 @@ $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="product-update">
+
+    <?=$this->render('_update_menu', ['model' => $model])?>
 
     <?= $this->render('_form', [
         'model' => $model,

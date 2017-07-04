@@ -3,6 +3,9 @@
 namespace svsoft\yii\modules\catalog\admin\controllers;
 
 use svsoft\yii\modules\catalog\components\CatalogHelper;
+use svsoft\yii\modules\properties\models\forms\PropertyValueForm;
+use svsoft\yii\modules\properties\models\forms\types\FloatValue;
+use svsoft\yii\modules\properties\models\forms\types\StringValue;
 use Yii;
 use svsoft\yii\modules\catalog\models\Product;
 use svsoft\yii\modules\catalog\models\ProductSearch;

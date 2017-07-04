@@ -3,7 +3,7 @@
 namespace svsoft\yii\modules\properties\admin\controllers;
 
 use Yii;
-use svsoft\yii\modules\properties\models\Property;
+use svsoft\yii\modules\properties\models\data\Property;
 use svsoft\yii\modules\properties\models\PropertySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;

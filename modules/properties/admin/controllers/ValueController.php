@@ -3,14 +3,14 @@
 namespace svsoft\yii\modules\properties\admin\controllers;
 
 use Yii;
-use svsoft\yii\modules\properties\models\PropertyValue;
+use svsoft\yii\modules\properties\models\data\PropertyValue;
 use svsoft\yii\modules\properties\models\PropertyValueSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * PropertyValueController implements the CRUD actions for PropertyValue model.
+ * ValueController implements the CRUD actions for PropertyValue model.
  */
 class ValueController extends Controller
 {

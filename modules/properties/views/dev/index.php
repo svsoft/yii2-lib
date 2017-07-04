@@ -11,7 +11,7 @@
 
 <? foreach($objects as $object):?>
     <h3>
-        Модель: <?=$object->text_id?>
+        Модель: <?=$object->name?>
     </h3>
     <? foreach($object->getProperties() as $property):?>
         <div class="row">

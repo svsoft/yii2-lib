@@ -12,9 +12,8 @@ use yii\base\Exception;
  * @property $savePropertiesTogether
  * @package svsoft\yii\modules\properties\traits
  */
-trait Properties
+trait PropertiesTrait
 {
-
     /**
      * @var PropertyObject
      */

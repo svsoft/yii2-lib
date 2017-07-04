@@ -8,6 +8,7 @@ use svsoft\yii\modules\properties\components\types\StringValue;
 use Yii;
 use yii\base\Exception;
 use yii\behaviors\SluggableBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "property".
@@ -27,14 +28,44 @@ use yii\behaviors\SluggableBehavior;
  */
 class Property extends \yii\db\ActiveRecord
 {
-    const TYPE_STRING = 1;
-    const TYPE_INTEGER = 2;
-    const TYPE_FLOAT = 3;
-    const TYPE_TEXT = 4;
+    const TYPE_STRING    = 1;
+    const TYPE_INTEGER   = 2;
+    const TYPE_FLOAT     = 3;
+    const TYPE_TEXT      = 4;
     const TYPE_TIMESTAMP = 5;
 
     static public $types = [];
 
+    /**
+     * Возвращает название колонки в таблице property_value где хранятся значения типа $type
+     *
+     * @param $type
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    static public function columnNameByType($type)
+    {
+        static $columnNames = [
+            Property::TYPE_STRING       => 'string_value',
+            Property::TYPE_INTEGER      => 'int_value',
+            Property::TYPE_FLOAT        => 'float_value',
+            Property::TYPE_TEXT         => 'text_value',
+            Property::TYPE_TIMESTAMP    => 'timestamp_value',
+        ];
+
+        $columnName = ArrayHelper::getValue($columnNames, $type, null);
+
+        if (!$columnName)
+            throw new Exception('Undefined property type "' . $type . '"');
+
+        return $columnName;
+    }
+
+    public function getColumnName()
+    {
+        return self::columnNameByType($this->type);
+    }
 
     static public function getTypes($type = null)
     {

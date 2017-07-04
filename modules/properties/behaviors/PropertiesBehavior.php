@@ -15,12 +15,15 @@ use yii\db\ActiveRecord;
  */
 class PropertiesBehavior extends Behavior
 {
-    public $getModelIdCallback;
+    /**
+     * @var \Closure
+     */
+    public $getId;
 
     public function init()
     {
-        if (empty($this->getModelIdCallback))
-            throw new Exception('Property getModelIdCallback does not set in ' . __CLASS__);
+        if (empty($this->getId))
+            throw new Exception('Property getId does not set in ' . __CLASS__);
 
         parent::init();
     }
@@ -40,7 +43,7 @@ class PropertiesBehavior extends Behavior
      */
     public function getModelId()
     {
-        return call_user_func($this->getModelIdCallback, $this->owner);
+        return call_user_func($this->getId, $this->owner);
     }
 
     public function afterInsert()

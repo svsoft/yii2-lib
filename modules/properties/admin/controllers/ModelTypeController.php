@@ -3,14 +3,14 @@
 namespace svsoft\yii\modules\properties\admin\controllers;
 
 use Yii;
-use svsoft\yii\modules\properties\models\PropertyModelType;
+use svsoft\yii\modules\properties\models\data\PropertyModelType;
 use svsoft\yii\modules\properties\models\PropertyModelTypeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ObjectTypeController implements the CRUD actions for PropertyModelType model.
+ * ModelTypeController implements the CRUD actions for PropertyModelType model.
  */
 class ModelTypeController extends Controller
 {
@@ -66,7 +66,7 @@ class ModelTypeController extends Controller
         $model = new PropertyModelType();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->object_type_id]);
+            return $this->redirect(['view', 'id' => $model->model_type_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -85,7 +85,7 @@ class ModelTypeController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->object_type_id]);
+            return $this->redirect(['view', 'id' => $model->model_type_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,

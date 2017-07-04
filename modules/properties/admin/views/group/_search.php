@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model svsoft\yii\modules\properties\PropertyGroupSearch */
+/* @var $model svsoft\yii\modules\properties\models\PropertyGroupSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'slug') ?>
 
-    <?= $form->field($model, 'object_type_id') ?>
+    <?= $form->field($model, 'model_type_id') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

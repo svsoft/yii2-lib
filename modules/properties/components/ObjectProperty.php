@@ -16,6 +16,11 @@ use yii\base\Object;
 use yii\helpers\ArrayHelper;
 
 /**
+ * Объект полчаемые методом getProperties у объекта класса PropertyObject, который в свою очередь прикреплен к модели
+ * типа товар, документ, категория, и т.д.
+ * состоит из объекта Property
+ * и массива значений свойств ObjectPropertyValue
+ *
  * Class ObjectProperty
  *
  * @property string name

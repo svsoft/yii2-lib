@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model svsoft\yii\modules\properties\models\PropertyGroup */
+/* @var $model svsoft\yii\modules\properties\models\data\PropertyGroup */
 
 $this->title = 'Create Property Group';
 $this->params['breadcrumbs'][] = ['label' => 'Property Groups', 'url' => ['index']];
@@ -12,10 +12,8 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="property-group-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
-        'model' => $model,
+    'model' => $model,
     ]) ?>
 
 </div>

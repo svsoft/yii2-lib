@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model svsoft\yii\modules\properties\PropertyValueSearch */
+/* @var $model svsoft\yii\modules\properties\models\PropertyValueSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -21,11 +21,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'object_id') ?>
 
-    <?= $form->field($model, 'object_type_id') ?>
-
     <?= $form->field($model, 'string_value') ?>
 
-    <?php // echo $form->field($model, 'text_value') ?>
+    <?= $form->field($model, 'text_value') ?>
 
     <?php // echo $form->field($model, 'int_value') ?>
 

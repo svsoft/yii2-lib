@@ -2,6 +2,9 @@
 
 namespace svsoft\yii\modules\catalog\models;
 
+use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
+use svsoft\yii\modules\properties\traits\Properties;
+use svsoft\yii\modules\properties\traits\PropertiesTrait;
 use Yii;
 use svsoft\yii\modules\main\files\FileAttributeBehavior;
 use svsoft\yii\modules\main\files\FileAttributeTrait;
@@ -29,6 +32,7 @@ use yii\behaviors\TimestampBehavior;
 class Product extends \yii\db\ActiveRecord
 {
     use FileAttributeTrait;
+    use PropertiesTrait;
 
     /**
      * @inheritdoc
@@ -70,7 +74,11 @@ class Product extends \yii\db\ActiveRecord
             [
                 'class'=>FileAttributeBehavior::className(),
                 'attributes' => ['images'],
-            ]
+            ],
+            [
+                'class' => PropertiesBehavior::className(),
+                'getId' => function($model) { return $model->product_id;  },
+            ],
         ];
     }
 

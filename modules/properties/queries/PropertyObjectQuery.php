@@ -114,6 +114,7 @@ class PropertyObjectQuery extends ActiveQuery
 //
 //        return;
         // Собираем условие для innerJoin
+        // TODO: не вельтрует при отрицании значения т.к. записей нет в таблицы знаений property_value и proprty_object
         $where = ['or'];
         foreach($normalizePropertyConditions as $propertyId=>$condition)
         {

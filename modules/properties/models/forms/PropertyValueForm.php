@@ -183,6 +183,7 @@ abstract class PropertyValueForm extends Model
         static $classes = [
             Property::TYPE_STRING => 'svsoft\yii\modules\properties\models\forms\types\StringValue',
             Property::TYPE_FLOAT => 'svsoft\yii\modules\properties\models\forms\types\FloatValue',
+            Property::TYPE_BOOLEAN => 'svsoft\yii\modules\properties\models\forms\types\BooleanValue',
         ];
 
         $form = new $classes[$property->type];

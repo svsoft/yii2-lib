@@ -4,6 +4,7 @@ namespace svsoft\yii\modules\properties\models\data;
 
 use svsoft\yii\modules\properties\components\ObjectProperty;
 use svsoft\yii\modules\properties\components\ObjectPropertyValue;
+use svsoft\yii\modules\properties\queries\PropertyObjectQuery;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
@@ -210,5 +211,38 @@ class PropertyObject extends \yii\db\ActiveRecord
         }
 
         return true;
+    }
+
+    /**
+     * Ищет по ид типа модели и ид модель объект для связи со свойствами.
+     * Если не нашел создает запись в БД и возвращает объект
+     *
+     * @param $model_type_id
+     * @param $model_id
+     *
+     * @return PropertyObject|static
+     */
+    static function findOneElseInsert($model_type_id, $model_id)
+    {
+        $condition = ['model_type_id'=>$model_type_id, 'model_id'=>$model_id];
+
+        $object = parent::findOne($condition);
+
+        if (!$object)
+        {
+            $object = new self($condition);
+            $object->save();
+        }
+
+        return $object;
+    }
+
+    /**
+     * @inheritdoc
+     * @return PropertyObjectQuery the newly created [[ActiveQuery]] instance.
+     */
+    static function find()
+    {
+        return \Yii::createObject(PropertyObjectQuery::className(), [get_called_class()]);
     }
 }

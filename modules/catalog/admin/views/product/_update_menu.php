@@ -1,3 +1,6 @@
+<?php
+?>
+
 <?=\yii\widgets\Menu::widget([
     'options' => [
         'class'=>'nav nav-tabs'],

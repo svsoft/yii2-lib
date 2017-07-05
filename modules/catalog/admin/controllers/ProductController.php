@@ -3,6 +3,8 @@
 namespace svsoft\yii\modules\catalog\admin\controllers;
 
 use svsoft\yii\modules\catalog\components\CatalogHelper;
+use svsoft\yii\modules\properties\admin\actions\PropertiesAction;
+use svsoft\yii\modules\properties\models\data\Property;
 use svsoft\yii\modules\properties\models\forms\PropertyValueForm;
 use svsoft\yii\modules\properties\models\forms\types\FloatValue;
 use svsoft\yii\modules\properties\models\forms\types\StringValue;
@@ -30,6 +32,21 @@ class ProductController extends Controller
                 'actions' => [
                     'delete' => ['POST'],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        return [
+            'properties' => [
+                'class' => PropertiesAction::className(),
+//                'view'=> $this->module->basePath . '/views/product/properties.php',
+                'view' => '@svs-catalog/admin/views/product/properties',
+                'modelClass' => Product::className(),
             ],
         ];
     }

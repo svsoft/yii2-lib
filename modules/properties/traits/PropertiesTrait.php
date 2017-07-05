@@ -2,8 +2,11 @@
 
 namespace svsoft\yii\modules\properties\traits;
 
+use svsoft\yii\modules\properties\models\data\Property;
 use svsoft\yii\modules\properties\models\data\PropertyModelType;
 use svsoft\yii\modules\properties\models\data\PropertyObject;
+use svsoft\yii\modules\properties\models\data\PropertyValue;
+use svsoft\yii\modules\properties\queries\PropertyObjectQuery;
 use yii\base\Exception;
 
 /**
@@ -11,6 +14,7 @@ use yii\base\Exception;
  * @property PropertyObject $propertyObject
  * @property $savePropertiesTogether
  * @package svsoft\yii\modules\properties\traits
+ * @method getModelId();
  */
 trait PropertiesTrait
 {
@@ -22,7 +26,7 @@ trait PropertiesTrait
     /**
      * @var PropertyModelType
      */
-    private $modelType;
+    static private $modelType;
 
     /**
      * флаг сохранения свойств вместе с моделью
@@ -41,14 +45,14 @@ trait PropertiesTrait
     {
         if ($this->propertyObject === null)
         {
-            $this->modelType = PropertyModelType::findOne(['class' => __CLASS__]);
+            $modelType = self::getModelType();
 
-            if (!$this->modelType)
+            if (!$modelType)
                 throw new Exception(__CLASS__ . ' is not found in PropertyModelType');
 
             $modelId = $this->getModelId();
 
-            $attributes = ['model_id' => $modelId, 'model_type_id' => $this->modelType->model_type_id];
+            $attributes = ['model_id' => $modelId, 'model_type_id' => $modelType->model_type_id];
 
             $this->propertyObject = PropertyObject::findOne($attributes);
 
@@ -63,6 +67,23 @@ trait PropertiesTrait
 
 
         return $this->propertyObject;
+    }
+
+    /**
+     * Получаем соответствующий тип модели
+     *
+     * @return PropertyModelType
+     * @throws Exception
+     */
+    static public function getModelType()
+    {
+        if (!static::$modelType)
+            static::$modelType = PropertyModelType::findOne(['class' => __CLASS__]);
+
+        if (!static::$modelType)
+            throw new Exception(__CLASS__ . ' is not found in PropertyModelType');
+
+        return static::$modelType;
     }
 
     /**
@@ -124,4 +145,29 @@ trait PropertiesTrait
     {
         return $this->savePropertiesTogether;
     }
+
+    static public function filterByProperties($properties, $query = null)
+    {
+        $modelType = self::getModelType();
+
+        if (!$query)
+            $query = call_user_func_array([$modelType->class,'find'],[]);
+
+        // Получаем список ид объектов
+        $queryPropertyObject = PropertyObject::find()->andProperty($properties);
+
+        $queryPropertyObject->andWhere(['model_type_id'=>$modelType->model_type_id]);
+
+        $objects = $queryPropertyObject->indexBy('object_id')->all();
+
+        $modelIdColumn = current(self::primaryKey());
+
+        $query->andWhere([$modelIdColumn=>array_keys($objects)]);
+
+        return $query;
+    }
+
+
+
+
 }

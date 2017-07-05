@@ -2,6 +2,7 @@
 
 namespace svsoft\yii\modules\properties\models\forms\types;
 
+use svsoft\yii\modules\properties\models\data\Property;
 use svsoft\yii\modules\properties\models\forms\PropertyValueForm;
 
 /**
@@ -13,7 +14,7 @@ class IntegerValue extends PropertyValueForm
 {
     public function getColumnName()
     {
-        return 'int_value';
+        return Property::columnNameByType(Property::TYPE_INTEGER);
     }
 
     function rules()

@@ -11,6 +11,8 @@ $this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->product_id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
+
+
 <div class="product-update">
 
     <?=$this->render('_update_menu', ['model' => $model])?>

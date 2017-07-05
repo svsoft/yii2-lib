@@ -4,31 +4,34 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 
-/* @var $model \svsoft\yii\modules\properties\models\data\PropertyObject */
+/* @var $propertyObject \svsoft\yii\modules\properties\models\data\PropertyObject */
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $valueModels \svsoft\yii\modules\properties\models\forms\PropertyValueForm[] */
 /* @var $property \svsoft\yii\modules\properties\models\data\Property  */
 ?>
 
-<div class="properties-update box box-primary">
+<div class="properties-form box box-primary">
 
     <?php $form = ActiveForm::begin(); ?>
     <div class="box-body table-responsive">
 
         <? foreach($groupByProperties as $item):?>
             <?
-                $printLabel = true;
-                $property = $item['property']->property;
+            $printLabel = true;
+            $property = $item['property']->property;
+            $valueModels = $item['values'];
             ?>
-            <? foreach($item['values'] as $valueModel):?>
+            <? foreach($valueModels as $valueModel):?>
+
                 <?=$form->field($valueModel, 'value')->label($printLabel ?  $item['property']->name : false)->textInput() ?>
+
                 <?$printLabel = false;?>
             <?endforeach;?>
             <? if ($item['property']->property->multiple):?>
-            <div class="form-group">
-                <?=Html::a('<i class="fa fa-plus"></i>',['object/add-value','id'=>$model->object_id, 'property_id'=>$property->property_id], ['class'=>'add-button btn btn-success btn-flat'])?>
-            </div>
+                <div class="form-group">
+                    <?=Html::a('<i class="fa fa-plus"></i>',['/properties/admin/object/add-value','id'=>$propertyObject->object_id, 'property_id'=>$property->property_id], ['class'=>'add-button btn btn-success btn-flat'])?>
+                </div>
             <? endif;?>
         <?endforeach;?>
     </div>
@@ -36,6 +39,7 @@ use yii\widgets\ActiveForm;
         <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>
     </div>
     <?php ActiveForm::end(); ?>
+
 </div>
 
 <?php

@@ -5,6 +5,7 @@ namespace svsoft\yii\modules\properties\models\data;
 use svsoft\yii\modules\properties\components\types\FloatValue;
 use svsoft\yii\modules\properties\components\types\IntegerValue;
 use svsoft\yii\modules\properties\components\types\StringValue;
+use svsoft\yii\modules\properties\components\types\BooleanValue;
 use Yii;
 use yii\base\Exception;
 use yii\behaviors\SluggableBehavior;
@@ -33,6 +34,7 @@ class Property extends \yii\db\ActiveRecord
     const TYPE_FLOAT     = 3;
     const TYPE_TEXT      = 4;
     const TYPE_TIMESTAMP = 5;
+    const TYPE_BOOLEAN   = 6;
 
     static public $types = [];
 
@@ -52,12 +54,12 @@ class Property extends \yii\db\ActiveRecord
             Property::TYPE_FLOAT        => 'float_value',
             Property::TYPE_TEXT         => 'text_value',
             Property::TYPE_TIMESTAMP    => 'timestamp_value',
+            Property::TYPE_BOOLEAN      => 'int_value',
         ];
 
-        $columnName = ArrayHelper::getValue($columnNames, $type, null);
+        $type = self::getTypes($type);
 
-        if (!$columnName)
-            throw new Exception('Undefined property type "' . $type . '"');
+        $columnName = $type['columnName'];
 
         return $columnName;
     }
@@ -67,6 +69,7 @@ class Property extends \yii\db\ActiveRecord
         return self::columnNameByType($this->type);
     }
 
+
     static public function getTypes($type = null)
     {
         if (!self::$types)
@@ -75,22 +78,32 @@ class Property extends \yii\db\ActiveRecord
                 self::TYPE_STRING => [
                     'valueClass'=> StringValue::className(),
                     'name'=>'Строка',
+                    'columnName'=> 'string_value',
                 ],
                 self::TYPE_INTEGER => [
                     'valueClass'=> IntegerValue::className(),
                     'name'=>'Целое число',
+                    'columnName'=> 'int_value',
                 ],
                 self::TYPE_FLOAT => [
                     'valueClass'=> FloatValue::className(),
                     'name'=>'Действительное число',
+                    'columnName'=> 'float_value',
                 ],
                 self::TYPE_TEXT => [
                     'valueClass'=> StringValue::className(),
                     'name'=>'Текст',
+                    'columnName'=> 'text_value',
                 ],
                 self::TYPE_TIMESTAMP => [
                     'valueClass'=> StringValue::className(),
                     'name'=>'Дата/время',
+                    'columnName'=> 'timestamp_value',
+                ],
+                self::TYPE_BOOLEAN => [
+                    'valueClass'=> BooleanValue::className(),
+                    'name'=>'Да/Нет',
+                    'columnName'=> 'int_value',
                 ],
             ];
         }

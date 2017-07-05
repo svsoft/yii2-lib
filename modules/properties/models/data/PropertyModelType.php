@@ -6,6 +6,8 @@ use Yii;
 use yii\behaviors\SluggableBehavior;
 
 /**
+ * TODO: Доавить уникальность на атрибут class
+ *
  * This is the model class for table "property_model_type".
  *
  * @property int $model_type_id

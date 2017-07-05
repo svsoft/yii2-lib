@@ -148,6 +148,9 @@ trait PropertiesTrait
 
     static public function filterByProperties($properties, $query = null)
     {
+        if (!$properties)
+            return $query;
+
         $modelType = self::getModelType();
 
         if (!$query)

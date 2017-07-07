@@ -7,6 +7,9 @@ use Yii;
 use svsoft\yii\modules\main\components\BaseModule;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
+use yii\base\Model;
+use yii\base\Module;
+use yii\helpers\ArrayHelper;
 
 /**
  * main module definition class
@@ -70,7 +73,6 @@ class MainModule extends \yii\base\Module implements BootstrapInterface
         Yii::setAlias('@web-images', '@web-upload/images');
         Yii::setAlias('@web-files', '@web-upload/files');
 
-
         // Для консольного приложения добавляем пути миграция
         if ($app instanceof \yii\console\Application)
         {
@@ -81,11 +83,18 @@ class MainModule extends \yii\base\Module implements BootstrapInterface
             // Список модулей для миграций
             foreach($this->adminModules as $moduleId)
             {
-                $path = Yii::getAlias('@svs-lib/modules') . '/' . $moduleId;
-                $namespace = 'svsoft\yii\modules\\' . $moduleId;
+                $module = ArrayHelper::getValue(Yii::$app->modules, $moduleId);
+                if ($module)
+                {
+                    $class = $module['class'];
 
-                if (file_exists($path. '/migrations'))
-                    $migrateConfig['migrationNamespaces'][] =  $namespace . '\migrations';
+                    $reflectionClass = new \ReflectionClass($class);
+                    $path = dirname($reflectionClass->getFileName());
+                    $namespace = $reflectionClass->getNamespaceName();
+
+                    if (file_exists($path. '/migrations'))
+                        $migrateConfig['migrationNamespaces'][] =  $namespace . '\migrations';
+                }
             }
         }
 
@@ -96,4 +105,5 @@ class MainModule extends \yii\base\Module implements BootstrapInterface
             $giiCrudConfig['class'] = 'yii\gii\generators\crud\Generator';
 
         $giiCrudConfig['templates']['adminlte'] = '@svs-main/gii/templates/crud/simple';
-    }}
+    }
+}

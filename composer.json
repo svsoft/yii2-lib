@@ -15,6 +15,11 @@
     "imagine/imagine": "*",
     "dmstr/yii2-adminlte-asset": "2.*",
     "yiisoft/yii2-jui": "~2.0.0"
+    "bower-asset/slick-carousel": "^1.6",
+    "bower-asset/components-font-awesome": "^4.7",
+    "2amigos/yii2-google-maps-library": "dev-master",
+    "2amigos/yii2-ckeditor-widget": "^1.0@dev",
+    "mihaildev/yii2-elfinder": "dev-master"
   },
   "autoload": {
     "psr-4": {

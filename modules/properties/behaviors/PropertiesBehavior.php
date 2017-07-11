@@ -20,6 +20,13 @@ class PropertiesBehavior extends Behavior
      */
     public $getId;
 
+    /**
+     * Название атрибуто которое будет использоваться в качестви имени модели
+     *
+     * @var str
+     */
+    public $nameAttribute;
+
     public function init()
     {
         if (empty($this->getId))
@@ -66,6 +73,11 @@ class PropertiesBehavior extends Behavior
         // Проверяем надо ли сохранять свойства
         if ($this->owner->savePropertiesTogether)
             $this->owner->getPropertyObject()->saveProperties();
+    }
+
+    public function getPropertiesBehavior()
+    {
+        return $this;
     }
 
 }

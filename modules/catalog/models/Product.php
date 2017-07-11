@@ -78,6 +78,7 @@ class Product extends \yii\db\ActiveRecord
             [
                 'class' => PropertiesBehavior::className(),
                 'getId' => function($model) { return $model->product_id;  },
+                'nameAttribute' => 'name',
             ],
         ];
     }

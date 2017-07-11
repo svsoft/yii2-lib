@@ -5,6 +5,7 @@ namespace svsoft\yii\modules\properties\queries;
 
 
 use svsoft\yii\modules\properties\models\data\Property;
+use svsoft\yii\modules\properties\models\data\PropertyObject;
 use svsoft\yii\modules\properties\models\data\PropertyValue;
 use yii\base\Exception;
 use yii\db\ActiveQuery;
@@ -104,17 +105,21 @@ class PropertyObjectQuery extends ActiveQuery
             $normalizePropertyConditions[$propertyId] = $condition;
         }
 
-//        foreach($normalizePropertyConditions as $propertyId=>$condition)
-//        {
-//            $clone = clone $this;
-//
-//            $clone->leftJoin(PropertyValue::tableName(), ['and','property_object.object_id = property_value.object_id',['property_id'=>$propertyId]);
-//            $clone->andWhere($condition);
-//        }
-//
-//        return;
+        $p = Property::tableName();
+        $po = PropertyObject::tableName();
+        $pv = PropertyValue::tableName();
+
+        // TODO: Сделать отдельным запросом получение object_id
+//        $rows = (new \yii\db\Query())
+//            ->select(['id', 'email'])
+//            ->from('user')
+//            ->where(['last_name' => 'Smith'])
+//            ->limit(10)
+//            ->all();
+
+
         // Собираем условие для innerJoin
-        // TODO: не вельтрует при отрицании значения т.к. записей нет в таблицы знаений property_value и proprty_object
+        // TODO: не фильтрует при отрицании значения т.к. записей нет в таблицы знаений property_value и proprty_object
         $where = ['or'];
         foreach($normalizePropertyConditions as $propertyId=>$condition)
         {
@@ -123,16 +128,26 @@ class PropertyObjectQuery extends ActiveQuery
                 $condition = ['or', $condition, ['IS', $condition[1], null]];
             }
 
-            $where[] = ['and',['property_id'=>$propertyId], $condition];
+            $where[] = ['and',[$p.'.property_id'=>$propertyId], $condition];
         }
 
-        // var_dump($where); die();
-        // Получаем id моделей
-        $this->innerJoin(PropertyValue::tableName(), 'property_object.object_id = property_value.object_id')
-            ->andWhere($where)
-            ->asArray()
-            ->indexBy('model_id')
-            ->having(['count(property_value.object_id)'=>count($where) - 1])
-            ->groupBy('property_value.object_id');
+        $query = $this->leftJoin($p, "{$p}.model_type_id = {$po}.model_type_id")
+            ->leftJoin($pv, "{$pv}.object_id = {$po}.object_id AND {$pv}.property_id = {$p}.property_id")
+            ->andWhere($where);
+
+        $query->groupBy($po.'.object_id');;
+
+        if (count($where) > 2)
+            $query->having(["count({$pv}.object_id)"=>count($where) - 1]);
+
+
+
+//        // Получаем id моделей
+//        $this->innerJoin(PropertyValue::tableName(), 'property_object.object_id = property_value.object_id')
+//            ->andWhere($where)
+//            ->asArray()
+//            ->indexBy('model_id')
+//            ->having(['count(property_value.object_id)'=>count($where) - 1])
+//            ->groupBy('property_value.object_id');
     }
 }

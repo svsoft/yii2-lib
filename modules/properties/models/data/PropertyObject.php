@@ -2,9 +2,12 @@
 
 namespace svsoft\yii\modules\properties\models\data;
 
+use svsoft\yii\modules\catalog\models\Product;
 use svsoft\yii\modules\properties\components\ObjectProperty;
 use svsoft\yii\modules\properties\components\ObjectPropertyValue;
+use svsoft\yii\modules\properties\models\forms\PropertyForm;
 use svsoft\yii\modules\properties\queries\PropertyObjectQuery;
+use svsoft\yii\modules\properties\traits\PropertiesTrait;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
@@ -18,6 +21,8 @@ use yii\helpers\ArrayHelper;
  * @property ObjectProperty[] $properties
  * @property PropertyModelType $modelType
  * @property PropertyValue[] $propertyValues
+ * @property PropertiesTrait $model
+ * @property Product $product
  */
 class PropertyObject extends \yii\db\ActiveRecord
 {
@@ -26,6 +31,9 @@ class PropertyObject extends \yii\db\ActiveRecord
      * @var ObjectProperty[]
      */
     private $_properties;
+
+    private $_propertyForms;
+
     /**
      * @inheritdoc
      */
@@ -80,9 +88,36 @@ class PropertyObject extends \yii\db\ActiveRecord
      *
      * @return \svsoft\yii\modules\properties\components\ObjectProperty[]|null
      */
-    public function getProperties()
+    public function getPropertyForms()
     {
         if ($this->_properties === null)
+        {
+            $properties = $this->modelType->getProperties()->indexBy('property_id')->all();
+
+            $propertyValues = $this->propertyValues;
+
+            $groupByPropertyId = [];
+            foreach($propertyValues as $value)
+            {
+                $groupByPropertyId[$value['property_id']][] = $value;
+            }
+
+            foreach($properties as $propertyId => $property)
+            {
+                $values = ArrayHelper::getValue($groupByPropertyId, $propertyId, []);
+
+                $PropertyForm = PropertyForm::createForm($this, $property, $values);
+
+                $this->_properties[$propertyId] = $PropertyForm;
+            }
+        }
+
+        return $this->_properties;
+    }
+
+    public function getProperties()
+    {
+        if ($this->_propertyForms === null)
         {
             $properties = $this->modelType->getProperties()->indexBy('property_id')->all();
 
@@ -100,11 +135,11 @@ class PropertyObject extends \yii\db\ActiveRecord
 
                 $ObjectProperty = new ObjectProperty($this, $property, $values);
 
-                $this->_properties[$propertyId] = $ObjectProperty;
+                $this->_propertyForms[$propertyId] = $ObjectProperty;
             }
         }
 
-        return $this->_properties;
+        return $this->_propertyForms;
     }
 
 
@@ -245,4 +280,15 @@ class PropertyObject extends \yii\db\ActiveRecord
     {
         return \Yii::createObject(PropertyObjectQuery::className(), [get_called_class()]);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getModel()
+    {
+        $class = $this->modelType->class;
+
+        return $this->hasOne($class, [$class::primaryKey()[0] => 'model_id']);
+    }
+
 }

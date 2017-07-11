@@ -2,6 +2,7 @@
 
 namespace svsoft\yii\modules\properties\models\data;
 
+use svsoft\yii\modules\catalog\models\Product;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
@@ -20,6 +21,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property PropertyObject $object
  * @property Property $property
+ * @value mixed $property
  */
 class PropertyValue extends \yii\db\ActiveRecord
 {
@@ -62,6 +64,11 @@ class PropertyValue extends \yii\db\ActiveRecord
             'int_value' => 'Int Value',
             'float_value' => 'Float Value',
             'timestamp_value' => 'Timestamp Value',
+            'property' => 'Свойство',
+            'propertyType' => 'Тип',
+            'model' => 'Объект',
+            'modelType'=>'Тип объекта',
+            'value'=>'Значение'
         ];
     }
 
@@ -79,5 +86,37 @@ class PropertyValue extends \yii\db\ActiveRecord
     public function getProperty()
     {
         return $this->hasOne(Property::className(), ['property_id' => 'property_id']);
+    }
+
+    /**
+     * Возвращает занчени в соответстии с типом совйства
+     */
+    public function getValue()
+    {
+        $column = $this->property->getColumnName();
+
+        return $this->getAttribute($column);
+    }
+
+    /**
+     * Возвращает занчени в соответстии с типом совйства
+     */
+    public function setValue($value)
+    {
+        $column = $this->property->getColumnName();
+
+        return $this->setAttribute($column, $value);
+    }
+
+
+    /**
+     * @param $object_id
+     * @param $property_id
+     *
+     * @return PropertyValue[]
+     */
+    static public function findByObjectAndProperty($object_id, $property_id)
+    {
+        return PropertyValue::find()->where(['property_id'=>$property_id, 'object_id'=>$object_id])->indexBy('value_id')->all();
     }
 }

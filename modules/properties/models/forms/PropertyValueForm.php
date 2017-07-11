@@ -141,7 +141,10 @@ abstract class PropertyValueForm extends Model
             return true;
         }
 
-        return $this->propertyValue->save();
+        if ($this->value)
+            return $this->propertyValue->save();
+
+        return true;
     }
 
     /**

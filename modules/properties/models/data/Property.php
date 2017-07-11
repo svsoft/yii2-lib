@@ -6,6 +6,10 @@ use svsoft\yii\modules\properties\components\types\FloatValue;
 use svsoft\yii\modules\properties\components\types\IntegerValue;
 use svsoft\yii\modules\properties\components\types\StringValue;
 use svsoft\yii\modules\properties\components\types\BooleanValue;
+use svsoft\yii\modules\properties\models\forms\types\PropertyBoolean;
+use svsoft\yii\modules\properties\models\forms\types\PropertyFloat;
+use svsoft\yii\modules\properties\models\forms\types\PropertyInteger;
+use svsoft\yii\modules\properties\models\forms\types\PropertyString;
 use Yii;
 use yii\base\Exception;
 use yii\behaviors\SluggableBehavior;
@@ -79,31 +83,37 @@ class Property extends \yii\db\ActiveRecord
                     'valueClass'=> StringValue::className(),
                     'name'=>'Строка',
                     'columnName'=> 'string_value',
+                    'typeClass'=> PropertyString::className(),
                 ],
                 self::TYPE_INTEGER => [
                     'valueClass'=> IntegerValue::className(),
                     'name'=>'Целое число',
                     'columnName'=> 'int_value',
+                    'typeClass'=> PropertyInteger::className(),
                 ],
                 self::TYPE_FLOAT => [
                     'valueClass'=> FloatValue::className(),
                     'name'=>'Действительное число',
                     'columnName'=> 'float_value',
+                    'typeClass'=> PropertyFloat::className(),
                 ],
                 self::TYPE_TEXT => [
                     'valueClass'=> StringValue::className(),
                     'name'=>'Текст',
                     'columnName'=> 'text_value',
+                    'typeClass'=> PropertyString::className(),
                 ],
                 self::TYPE_TIMESTAMP => [
                     'valueClass'=> StringValue::className(),
                     'name'=>'Дата/время',
                     'columnName'=> 'timestamp_value',
+                    'typeClass'=> PropertyInteger::className(),
                 ],
                 self::TYPE_BOOLEAN => [
                     'valueClass'=> BooleanValue::className(),
                     'name'=>'Да/Нет',
                     'columnName'=> 'int_value',
+                    'typeClass'=> PropertyBoolean::className(),
                 ],
             ];
         }
@@ -134,7 +144,7 @@ class Property extends \yii\db\ActiveRecord
     {
         return [
             [['model_type_id', 'group_id', 'type', 'multiple', 'active'], 'integer'],
-            [['model_type_id', 'type','name','slug'], 'required'],
+            [['model_type_id', 'type','name'], 'required'],
             [['name', 'slug'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => PropertyGroup::className(), 'targetAttribute' => ['group_id' => 'group_id']],
             [['model_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PropertyModelType::className(), 'targetAttribute' => ['model_type_id' => 'model_type_id']],
@@ -205,6 +215,28 @@ class Property extends \yii\db\ActiveRecord
             throw new Exception('Property type does not exist');
 
         return $type['valueClass'];
+    }
+
+    /**
+     * Получаевт название типа текущего свойства
+     */
+    public function getTypeName()
+    {
+        if (!$type = Property::getTypes($this->type))
+            throw new Exception('Property type does not exist');
+
+        return $type['name'];
+    }
+
+    /**
+     * Получает имя класса реализующие функционал в соответсвие с типом
+     */
+    public function getTypeClass()
+    {
+        if (!$type = Property::getTypes($this->type))
+            throw new Exception('Property type does not exist');
+
+        return $type['typeClass'];
     }
 
     /**

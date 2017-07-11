@@ -8,13 +8,19 @@ use svsoft\yii\modules\properties\models\data\PropertyObject;
 use svsoft\yii\modules\properties\models\data\PropertyValue;
 use svsoft\yii\modules\properties\queries\PropertyObjectQuery;
 use yii\base\Exception;
+use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
 
 /**
- * Class Properties
+ * Trait PropertiesTrait
+ *
  * @property PropertyObject $propertyObject
  * @property $savePropertiesTogether
- * @package svsoft\yii\modules\properties\traits
+ * @property $modelName
+ *
  * @method getModelId();
+ * @method PropertiesBehavior getPropertiesBehavior()
+ *
+ * @package svsoft\yii\modules\properties\traits
  */
 trait PropertiesTrait
 {
@@ -159,15 +165,32 @@ trait PropertiesTrait
         // Получаем список ид объектов
         $queryPropertyObject = PropertyObject::find()->andProperty($properties);
 
-        $queryPropertyObject->andWhere(['model_type_id'=>$modelType->model_type_id]);
+        $queryPropertyObject->andWhere([PropertyObject::tableName() . '.model_type_id'=>$modelType->model_type_id]);
 
-        $objects = $queryPropertyObject->indexBy('object_id')->all();
+        $objects = $queryPropertyObject->indexBy('model_id')->select('property_object.model_id')->asArray()->all();
 
         $modelIdColumn = current(self::primaryKey());
 
         $query->andWhere([$modelIdColumn=>array_keys($objects)]);
 
         return $query;
+    }
+
+    /**
+     * Возвращает название сущности к которой прикреплены свойства
+     *
+     *
+     * @return string
+     * @throws Exception
+     */
+    function getModelName()
+    {
+        $attr = $this->getPropertiesBehavior()->nameAttribute;
+
+        if (!$attr)
+            throw new Exception('Property nameAttribute is not set in method '.get_class($this).'::behaviors() for PropertiesBehavior');
+
+        return $this->getAttribute($attr);
     }
 
 

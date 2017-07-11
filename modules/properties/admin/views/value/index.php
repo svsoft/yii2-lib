@@ -22,12 +22,30 @@ $this->params['breadcrumbs'][] = $this->title;
             'layout' => "{items}\n{summary}\n{pager}",
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-
                 'value_id',
                 'property_id',
                 'object_id',
-                'string_value',
-                'text_value:ntext',
+                [
+                    'attribute' => 'property',
+                    'value' => 'property.name',
+                ],
+                [
+                    'attribute' => 'propertyType',
+                    'value' => 'property.typeName',
+                ],
+                [
+                    'attribute' => 'modelType',
+                    'value' => 'object.modelType.name',
+                ],
+                [
+                    'attribute'=>'model',
+                    'value' => function($model){
+                        return $model->object->model->modelName;
+                    },
+                ],
+                'value',
+                //'string_value',
+                //'text_value:ntext',
                 // 'int_value',
                 // 'float_value',
                 // 'timestamp_value:datetime',

@@ -1,20 +1,18 @@
 <?php
 
-namespace svsoft\yii\modules\properties\admin\controllers;
+namespace svsoft\yii\modules\shop\admin\controllers;
 
-use svsoft\yii\modules\properties\models\data\Property;
-use svsoft\yii\modules\properties\models\forms\PropertyValueForm;
 use Yii;
-use svsoft\yii\modules\properties\models\data\PropertyObject;
-use svsoft\yii\modules\properties\models\PropertyObjectSearch;
+use svsoft\yii\modules\shop\models\Order;
+use svsoft\yii\modules\shop\models\OrderSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ObjectController implements the CRUD actions for PropertyObject model.
+ * OrderController implements the CRUD actions for Order model.
  */
-class ObjectController extends Controller
+class OrderController extends Controller
 {
     /**
      * @inheritdoc
@@ -32,12 +30,12 @@ class ObjectController extends Controller
     }
 
     /**
-     * Lists all PropertyObject models.
+     * Lists all Order models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new PropertyObjectSearch();
+        $searchModel = new OrderSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -47,7 +45,7 @@ class ObjectController extends Controller
     }
 
     /**
-     * Displays a single PropertyObject model.
+     * Displays a single Order model.
      * @param integer $id
      * @return mixed
      */
@@ -59,16 +57,16 @@ class ObjectController extends Controller
     }
 
     /**
-     * Creates a new PropertyObject model.
+     * Creates a new Order model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new PropertyObject();
+        $model = new Order();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->object_id]);
+            return $this->redirect(['view', 'id' => $model->order_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -77,7 +75,7 @@ class ObjectController extends Controller
     }
 
     /**
-     * Updates an existing PropertyObject model.
+     * Updates an existing Order model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -86,9 +84,8 @@ class ObjectController extends Controller
     {
         $model = $this->findModel($id);
 
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->object_id]);
+            return $this->redirect(['view', 'id' => $model->order_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -96,21 +93,8 @@ class ObjectController extends Controller
         }
     }
 
-    public function actionAddValue($id, $property_id)
-    {
-        $object = $this->findModel($id);
-
-        $property = Property::findOne($property_id);
-        $valueModel = PropertyValueForm::createForm($property);
-        $valueModel->createPropertyValue($object);
-
-        $valueModel->save();
-
-        return $this->getView()->render('value', ['valueModel'=>$valueModel], $this);
-    }
-
     /**
-     * Deletes an existing PropertyObject model.
+     * Deletes an existing Order model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -123,15 +107,15 @@ class ObjectController extends Controller
     }
 
     /**
-     * Finds the PropertyObject model based on its primary key value.
+     * Finds the Order model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return PropertyObject the loaded model
+     * @return Order the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = PropertyObject::findOne($id)) !== null) {
+        if (($model = Order::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

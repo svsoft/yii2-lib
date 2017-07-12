@@ -31,7 +31,7 @@ class m170711_192947_ctreate_tables extends Migration
         ]);
 
         $this->addForeignKey('sci_order_id', 'shop_cart_item', 'order_id', 'shop_order', 'order_id', 'RESTRICT');
-
+        $this->addForeignKey('sci_product_id', 'shop_cart_item', 'product_id', 'catalog_product', 'product_id', 'RESTRICT');
     }
 
     public function safeDown()

@@ -58,6 +58,7 @@ class PropertiesAction extends Action
         // Получаем объект связи модели и свойств
         $object = PropertyObject::findOneElseInsert($modelType->model_type_id, $id);
 
+
         $properties = $modelType->properties;
 
         /**
@@ -66,10 +67,11 @@ class PropertiesAction extends Action
         $propertyForms = [];
         foreach($properties as $property)
         {
-            $propertyForm = PropertyForm::createForm($property, $object);
+            $propertyForm = PropertyForm::createForm($object, $property);
 
             $propertyForms[] = $propertyForm;
         }
+
 
         if (Yii::$app->request->isPost)
         {

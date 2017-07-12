@@ -2,7 +2,9 @@
 
 namespace svsoft\yii\modules\shop\models;
 
+use svsoft\yii\modules\catalog\models\Product;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "shop_cart_item".
@@ -18,6 +20,8 @@ use Yii;
  * @property integer $updated
  *
  * @property Order $order
+ * @property Product $product
+ *
  */
 class CartItem extends \yii\db\ActiveRecord
 {
@@ -36,7 +40,7 @@ class CartItem extends \yii\db\ActiveRecord
     {
         return [
             [['product_id', 'order_id', 'user_id', 'created', 'updated'], 'integer'],
-            [['session_id', 'created', 'updated'], 'required'],
+            [['session_id'], 'required'],
             [['price', 'count'], 'number'],
             [['session_id'], 'string', 'max' => 255],
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::className(), 'targetAttribute' => ['order_id' => 'order_id']],
@@ -61,6 +65,17 @@ class CartItem extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class'=>TimestampBehavior::className(),
+                'createdAtAttribute'=>'created',
+                'updatedAtAttribute'=>'updated',
+            ],
+        ];
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -68,4 +83,13 @@ class CartItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Order::className(), ['order_id' => 'order_id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProduct()
+    {
+        return $this->hasOne(Product::className(), ['product_id' => 'product_id']);
+    }
+
 }

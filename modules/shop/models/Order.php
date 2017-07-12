@@ -2,7 +2,9 @@
 
 namespace svsoft\yii\modules\shop\models;
 
+use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "shop_order".
@@ -33,7 +35,7 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'created', 'updated', 'status_id'], 'integer'],
-            [['external_id', 'created', 'updated'], 'required'],
+            [['external_id'], 'required'],
             [['external_id'], 'string', 'max' => 255],
         ];
     }
@@ -50,6 +52,22 @@ class Order extends \yii\db\ActiveRecord
             'created' => 'Created',
             'updated' => 'Updated',
             'status_id' => 'Status ID',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class'=>TimestampBehavior::className(),
+                'createdAtAttribute'=>'created',
+                'updatedAtAttribute'=>'updated',
+            ],
+            [
+                'class' => PropertiesBehavior::className(),
+                'getId' => function($model) { return $model->order_id;  },
+                'nameAttribute' => 'order_id',
+            ],
         ];
     }
 

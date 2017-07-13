@@ -1,6 +1,7 @@
 <?php
 namespace svsoft\yii\modules\shop\components;
 
+use svsoft\yii\modules\catalog\models\Product;
 use Yii;
 use svsoft\yii\modules\shop\models\CartItem;
 use yii\base\Component;
@@ -10,6 +11,14 @@ class Cart extends Component
     public $session_id;
 
     public $user_id;
+
+
+    /**
+     * Хранятся результаты функции getCartItems
+     *
+     * @var
+     */
+    private $cartItems = [];
 
     function init()
     {
@@ -100,7 +109,7 @@ class Cart extends Component
     }
 
     /**
-     * Возвращает запрос в фильтром по текущему пользователю.
+     * Возвращает запрос c фильтром по текущему пользователю.
      * Если это гость то выборка идет по session_id, иначе по user_id
      *
      * @return \yii\db\ActiveQuery
@@ -125,18 +134,27 @@ class Cart extends Component
      */
     function getCartItems($withProducts = true)
     {
-        $query = $this->filterByUser();
+        if (!array_key_exists((int)$withProducts, $this->cartItems))
+        {
+            $query = $this->filterByUser();
 
-        $query = $query->andWhere(['is', 'order_id', null]);
+            $query = $query->andWhere(['is', 'order_id', null]);
 
-        if ($withProducts)
-            $query ->with('product');
+            if ($withProducts)
+                $query ->with('product');
 
-        $items = $query->all();
+            $this->cartItems[$withProducts] = $query->all();
+        }
 
-        return $items;
+        return $this->cartItems[$withProducts];
     }
 
+
+    /**
+     * Возвращает количество товаров в корзине
+     *
+     * @return float|int
+     */
     function getCartCount()
     {
         $items = $this->getCartItems(false);
@@ -152,6 +170,25 @@ class Cart extends Component
     }
 
     /**
+     * Возвращает количество товаров в корзине
+     *
+     * @return float|int
+     */
+    function getCartTotlaPrice()
+    {
+        $items = $this->getCartItems(false);
+
+        $price = 0;
+
+        foreach($items as $item)
+        {
+            $price += $item->price * $item->count;
+        }
+
+        return $price;
+    }
+
+    /**
      * Проверяет доступ текущего пользоватлея к элементу карзины
      *
      * @param CartItem $cartItem
@@ -164,6 +201,41 @@ class Cart extends Component
             return $cartItem->user_id == $this->user_id;
 
         return $cartItem->session_id == $this->session_id;
+    }
+
+
+    function getCartItemsIndexByProductId()
+    {
+        $items = $this->getCartItems(false);
+
+        $index = [];
+
+        foreach($items as $item)
+        {
+            $index[$item->product_id] = $item;
+        }
+
+        return $index;
+    }
+
+    /**
+     * Проверяет наличие товара в корзине
+     *
+     * @param Product $product
+     *
+     * @return bool
+     */
+    function checkProductInCart(Product $product)
+    {
+        $items = $this->getCartItems(false);
+
+        foreach($items as $item)
+        {
+            if ($item->product_id == $product->product_id)
+                return true;
+        }
+
+        return false;
     }
 
 

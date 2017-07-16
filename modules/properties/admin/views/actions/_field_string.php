@@ -19,5 +19,5 @@ use unclead\multipleinput\MultipleInput;
 
     ])->label($propertyForm->property->name)?>
 <?else:?>
-    <?=$form->field($propertyForm, 'values['.$propertyForm->getFirsValueId().'#]')->label($propertyForm->property->name)->textInput()?>
+    <?=$form->field($propertyForm, 'value')->label($propertyForm->property->name)->textInput()?>
 <?endif;?>

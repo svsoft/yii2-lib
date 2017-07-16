@@ -23,5 +23,4 @@ use svsoft\yii\modules\properties\models\data\Property;
         <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>
     </div>
     <?php ActiveForm::end(); ?>
-
 </div>

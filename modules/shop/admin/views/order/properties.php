@@ -1,0 +1,22 @@
+<?php
+
+/* @var $this yii\web\View */
+/* @var $model \svsoft\yii\modules\shop\models\Order  */
+/* @var $propertyForms \svsoft\yii\modules\properties\models\forms\PropertyForm[] */
+
+$this->title = 'Редактирование свойств заказа: ' . $model->order_id;
+
+$this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->order_id, 'url' => ['view', 'id' => $model->order_id]];
+$this->params['breadcrumbs'][] = 'Properties';
+
+?>
+
+<div class="properties-update">
+
+    <?=$this->render('_update_menu', ['model' => $model])?>
+
+    <?=$this->render('@svs-properties/admin/views/actions/_properties_form', ['propertyForms' => $propertyForms])?>
+
+</div>
+

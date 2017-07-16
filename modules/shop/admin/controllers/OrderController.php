@@ -2,6 +2,7 @@
 
 namespace svsoft\yii\modules\shop\admin\controllers;
 
+use svsoft\yii\modules\properties\admin\actions\PropertiesAction;
 use Yii;
 use svsoft\yii\modules\shop\models\Order;
 use svsoft\yii\modules\shop\models\OrderSearch;
@@ -25,6 +26,20 @@ class OrderController extends Controller
                 'actions' => [
                     'delete' => ['POST'],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        return [
+            'properties' => [
+                'class' => PropertiesAction::className(),
+                'view' => '@svs-shop/admin/views/order/properties',
+                'modelClass' => Order::className(),
             ],
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace svsoft\yii\modules\properties\admin\controllers;
 
+use svsoft\yii\modules\properties\components\PropertyHelper;
 use Yii;
 use svsoft\yii\modules\properties\models\data\Property;
 use svsoft\yii\modules\properties\models\PropertySearch;
@@ -65,13 +66,19 @@ class PropertyController extends Controller
     {
         $model = new Property();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->property_id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        if ($model->load( Yii::$app->request->post() ))
+        {
+            $mode = Yii::$app->request->post('mode');
+
+            if (!$mode && $model->save())
+            {
+                return $this->redirect(['view', 'id' => $model->property_id]);
+            }
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -84,13 +91,19 @@ class PropertyController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->property_id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        if ($model->load( Yii::$app->request->post() ))
+        {
+            $mode = Yii::$app->request->post('mode');
+
+            if (!$mode && $model->save())
+            {
+                return $this->redirect(['view', 'id' => $model->property_id]);
+            }
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**

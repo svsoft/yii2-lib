@@ -116,6 +116,11 @@ class Property extends \yii\db\ActiveRecord
                     'typeClass'=> PropertyBoolean::className(),
                 ],
             ];
+
+            foreach(self::$types as $typeId=>&$item)
+            {
+                $item['type_id'] = $typeId;
+            }
         }
 
         if (!$type)
@@ -172,13 +177,13 @@ class Property extends \yii\db\ActiveRecord
     {
         return [
             'property_id' => 'Property ID',
-            'name' => 'Name',
-            'slug' => 'Slug',
-            'model_type_id' => 'Model Type ID',
-            'group_id' => 'Group ID',
-            'type' => 'Type',
-            'multiple' => 'Multiple',
-            'active' => 'Active',
+            'name' => 'Название',
+            'slug' => 'Код',
+            'model_type_id' => 'Тип объекта',
+            'group_id' => 'Группа',
+            'type' => 'Тип',
+            'multiple' => 'Множественное',
+            'active' => 'Активное',
         ];
     }
 

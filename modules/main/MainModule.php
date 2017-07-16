@@ -65,6 +65,7 @@ class MainModule extends \yii\base\Module implements BootstrapInterface
         Yii::setAlias('@svs-main', '@svs-lib/modules/main');
         Yii::setAlias('@svs-properties', '@svs-lib/modules/properties');
         Yii::setAlias('@svs-catalog', '@svs-lib/modules/catalog');
+        Yii::setAlias('@svs-shop', '@svs-lib/modules/shop');
 
         Yii::setAlias('@upload', '@app/web/upload');
         Yii::setAlias('@files', '@upload/files');

@@ -12,6 +12,8 @@ $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="order-update">
 
+    <?=$this->render('_update_menu', ['model' => $model])?>
+
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

@@ -6,4 +6,4 @@
 
 ?>
 
-<?=$form->field($propertyForm, 'values[0]')->label($propertyForm->property->name)->checkbox(['label'=>$propertyForm->property->name])?>
+<?=$form->field($propertyForm, 'value')->label($propertyForm->property->name)->checkbox(['label'=>$propertyForm->property->name])?>

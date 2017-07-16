@@ -42,15 +42,21 @@ abstract class PropertyForm extends Model
     public $object;
 
     /**
-     * Массив значений свойства
-     * Если свойство множественное:
+     *
+     * Массив значений свойства для множественного свойства
      * Если значение есть в БД то ключ равет <value_id>#
      * А если значение новое то ключи по порядку
-     * Если свойство не множественное, то значение хранится в нулевом элементе
      *
      * @var
      */
     public $values;
+
+    /**
+     * Значение не множественного
+     *
+     * @var
+     */
+    public $value;
 
     public $_propertyValues;
 
@@ -118,6 +124,7 @@ abstract class PropertyForm extends Model
         $this->propertyValues = $propertyValues;
 
         $this->values = $values;
+        $this->value = $values[0];
     }
 
 
@@ -191,18 +198,15 @@ abstract class PropertyForm extends Model
         if ($this->property->multiple)
             return $this->saveMultiple();
 
-        reset($this->values);
-        $value = current($this->values);
-
         if ($this->propertyValues)
         {
-            reset($this->propertyValues);
-            $propertyValue = current($this->propertyValues);
+            reset($this->_propertyValues);
+            $propertyValue = current($this->_propertyValues);
         }
         else
             $propertyValue = new PropertyValue(['object_id' => $this->object_id, 'property_id' => $this->property_id]);
 
-        $propertyValue->value = $value;
+        $propertyValue->value = $this->value;
 
         return $this->savePropertyValue($propertyValue);
     }

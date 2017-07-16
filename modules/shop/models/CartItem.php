@@ -40,10 +40,11 @@ class CartItem extends \yii\db\ActiveRecord
     {
         return [
             [['product_id', 'order_id', 'user_id', 'created', 'updated'], 'integer'],
-            [['session_id'], 'required'],
+            [['session_id','product_id'], 'required'],
             [['price', 'count'], 'number'],
             [['session_id'], 'string', 'max' => 255],
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::className(), 'targetAttribute' => ['order_id' => 'order_id']],
+            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'product_id']],
         ];
     }
 

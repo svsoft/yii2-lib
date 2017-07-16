@@ -3,6 +3,7 @@
 namespace svsoft\yii\modules\shop\models;
 
 use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
+use svsoft\yii\modules\properties\traits\PropertiesTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 
@@ -20,6 +21,8 @@ use yii\behaviors\TimestampBehavior;
  */
 class Order extends \yii\db\ActiveRecord
 {
+    use PropertiesTrait;
+
     /**
      * @inheritdoc
      */
@@ -35,7 +38,7 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'created', 'updated', 'status_id'], 'integer'],
-            [['external_id'], 'required'],
+            //[['external_id'], 'required'],
             [['external_id'], 'string', 'max' => 255],
         ];
     }

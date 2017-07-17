@@ -65,11 +65,13 @@ class Cart extends Component
      *
      * @return CartItem
      */
-    function getItemByProductId($product_id)
+    function getItemByProductId($product_id, $order_id = null)
     {
         $condition = [
             'product_id'=>$product_id,
         ];
+
+        $condition['order_id'] = $order_id;
 
         if ($this->user_id)
             $condition['user_id'] = $this->user_id;

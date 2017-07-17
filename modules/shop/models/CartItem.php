@@ -4,6 +4,7 @@ namespace svsoft\yii\modules\shop\models;
 
 use svsoft\yii\modules\catalog\models\Product;
 use Yii;
+use yii\base\Exception;
 use yii\behaviors\TimestampBehavior;
 
 /**
@@ -91,6 +92,27 @@ class CartItem extends \yii\db\ActiveRecord
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['product_id' => 'product_id']);
+    }
+
+
+    /**
+     * Связывает товар в козине с заказом и сохраняет в БД
+     *
+     * @param Order $order
+     *
+     * @throws Exception
+     */
+    public function linkOrder(Order $order)
+    {
+        if (!$order->order_id)
+            throw new Exception('Order attribute order_id must be set');
+
+        if ($this->order_id)
+            throw new Exception('Attribute order_id has already set');
+
+        $this->order_id = $order->order_id;
+
+        $this->save(false);
     }
 
 }

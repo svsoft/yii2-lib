@@ -58,8 +58,8 @@ class PropertiesAction extends Action
         // Получаем объект связи модели и свойств
         $object = PropertyObject::findOneElseInsert($modelType->model_type_id, $id);
 
-
         $properties = $modelType->properties;
+
 
         /**
          * @var $propertyForms PropertyForm[]

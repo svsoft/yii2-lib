@@ -3,11 +3,16 @@
 namespace svsoft\yii\modules\properties\behaviors;
 
 use svsoft\yii\modules\properties\traits\Properties;
+use svsoft\yii\modules\properties\traits\PropertiesTrait;
+use yii\base\Event;
 use yii\base\Exception;
 use yii\base\Behavior;
+use yii\base\ModelEvent;
 use yii\db\ActiveRecord;
 
 /**
+ * TODO: Добавить событие после удаления
+ *
  * Class Tree
  * @package app\behaviors
  *
@@ -19,6 +24,11 @@ class PropertiesBehavior extends Behavior
      * @var \Closure
      */
     public $getId;
+
+    /**
+     * @var PropertiesTrait
+     */
+    public $owner;
 
     /**
      * Название атрибуто которое будет использоваться в качестви имени модели
@@ -40,6 +50,7 @@ class PropertiesBehavior extends Behavior
         return [
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
+            ActiveRecord::EVENT_AFTER_VALIDATE => 'afterValidate',
         ];
     }
 
@@ -51,6 +62,22 @@ class PropertiesBehavior extends Behavior
     public function getModelId()
     {
         return call_user_func($this->getId, $this->owner);
+    }
+
+    /**
+     * После валидации модели валидируем примязанные свойства
+     *
+     * @param ModelEvent $event
+     */
+    public function afterValidate()
+    {
+        if (!$this->owner->savePropertiesTogether)
+            return;
+
+        $propertyObject = $this->owner->propertyObject;
+
+        if (!$propertyObject->validateProperties())
+            $this->owner->addError('properties', 'Properties validation error');
     }
 
     public function afterInsert()

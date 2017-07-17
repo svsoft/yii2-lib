@@ -16,6 +16,8 @@ use yii\behaviors\SluggableBehavior;
 use yii\helpers\ArrayHelper;
 
 /**
+ * TODO: При смене типа копировать значения из одной колонки в другую
+ *
  * This is the model class for table "property".
  *
  * @property int $property_id

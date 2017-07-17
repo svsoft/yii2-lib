@@ -106,25 +106,28 @@ abstract class PropertyForm extends Model
 
         $values = [];
 
+
         /**
          * Формируем значение для модели см. описания @property values
          */
-        foreach($propertyValues as $propertyValue)
+        if ($propertyValues)
         {
-            $values[$propertyValue->value_id.'#'] = $propertyValue->value;
+            foreach($propertyValues as $propertyValue)
+            {
+                $values[$propertyValue->value_id.'#'] = $propertyValue->value;
+            }
+
+            // Если у свойства не множественное значение то заполняем нулевой элемент значением
+            if (!$this->property->multiple)
+            {
+                reset($values);
+                $values = [current($values)];
+                $this->value = $values[0];
+            }
+
+            $this->propertyValues = $propertyValues;
+            $this->values = $values;
         }
-
-        // Если у свойства не множественное значение то заполняем нулевой элемент значением
-        if (!$this->property->multiple)
-        {
-            reset($values);
-            $values = [current($values)];
-        }
-
-        $this->propertyValues = $propertyValues;
-
-        $this->values = $values;
-        $this->value = $values[0];
     }
 
 

@@ -24,3 +24,7 @@ use svsoft\yii\modules\properties\models\data\Property;
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+
+<div class="">
+
+</div>

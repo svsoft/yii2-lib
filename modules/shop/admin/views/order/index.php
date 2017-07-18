@@ -24,14 +24,26 @@ $this->params['breadcrumbs'][] = $this->title;
                 ['class' => 'yii\grid\SerialColumn'],
 
                 'order_id',
-                'user_id',
-                'external_id',
-                'created',
-                'updated',
-                // 'status_id',
+                //'user_id',
+                //'external_id',
+                'created:datetime',
+                'updated:datetime',
+                'total_price:currency',
+                [
+                    'attribute' => 'products',
+                    'value' =>
+                        function(\svsoft\yii\modules\shop\models\Order $model)
+                        {
+                            $products = $model->getCartItems()->with('product')->asArray()->select(['product_id'])->all();
+                            $products = \yii\helpers\ArrayHelper::getColumn($products, 'product.name');
+                            return  implode(', ', $products);
+                        },
+                ],
 
                 ['class' => 'yii\grid\ActionColumn'],
             ],
         ]); ?>
+
+        <? // Yii::$app->formatter->asCurrency()?>
     </div>
 </div>

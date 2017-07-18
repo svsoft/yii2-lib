@@ -9,6 +9,7 @@ use svsoft\yii\modules\properties\models\data\PropertyValue;
 use svsoft\yii\modules\properties\queries\PropertyObjectQuery;
 use yii\base\Exception;
 use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
+use yii\db\ActiveQuery;
 
 /**
  * Trait PropertiesTrait
@@ -152,6 +153,12 @@ trait PropertiesTrait
         return $this->savePropertiesTogether;
     }
 
+    /**
+     * @param $properties
+     * @param null $query
+     *
+     * @return ActiveQuery
+     */
     static public function filterByProperties($properties, $query = null)
     {
         if (!$properties)

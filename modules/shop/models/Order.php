@@ -25,6 +25,8 @@ class Order extends \yii\db\ActiveRecord
     use PropertiesTrait;
 
 
+    const STATUS_NEW = 1;
+
     /**
      * @inheritdoc
      */
@@ -42,6 +44,7 @@ class Order extends \yii\db\ActiveRecord
             [['user_id', 'created', 'updated', 'status_id'], 'integer'],
             [['total_price'], 'number'],
             [['external_id'], 'string', 'max' => 255],
+            ['status', 'default', Order::STATUS_NEW]
         ];
     }
 
@@ -52,11 +55,13 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             'order_id' => 'Order ID',
-            'user_id' => 'User ID',
-            'external_id' => 'External ID',
-            'created' => 'Created',
-            'updated' => 'Updated',
-            'status_id' => 'Status ID',
+            'user_id' => 'Пользователь',
+            'external_id' => 'Внешний ИД',
+            'created' => 'Дата создания',
+            'updated' => 'Дата изменения',
+            'status_id' => 'статус',
+            'total_price' => 'Сумма',
+            'products'=> 'Товары'
         ];
     }
 

@@ -13,6 +13,9 @@ switch($propertyForm->property->type)
     case Property::TYPE_STRING:
         echo $this->render('_field_string', ['form' => $form, 'propertyForm' => $propertyForm]);
         break;
+    case Property::TYPE_TEXT:
+        echo $this->render('_field_text', ['form' => $form, 'propertyForm' => $propertyForm]);
+        break;
     case Property::TYPE_INTEGER:
         echo $this->render('_field_integer', ['form' => $form, 'propertyForm' => $propertyForm]);
         break;

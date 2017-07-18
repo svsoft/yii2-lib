@@ -171,7 +171,8 @@ class PropertyObject extends \yii\db\ActiveRecord
         $return = [];
         foreach($this->getProperties() as $property)
         {
-            $return[$property->name] = $property->getValuesAsArray();
+            $return[$property->property->name] = $property->property->multiple ? $property->values : $property->value;
+
         }
 
         return $return;

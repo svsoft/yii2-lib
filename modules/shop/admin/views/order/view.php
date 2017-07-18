@@ -22,16 +22,23 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </div>
     <div class="box-body table-responsive no-padding">
+
+        <?php
+        foreach($model->getPropertyAsList() as $name=>$value)
+            $properties[] = ['attribute'=>'test', 'label'=>$name, 'value'=>$value, 'format'=>'raw'];
+        ?>
+
         <?= DetailView::widget([
             'model' => $model,
-            'attributes' => [
-                'order_id',
-                'user_id',
-                'external_id',
-                'created',
-                'updated',
-                'status_id',
-            ],
+            'attributes' => \yii\helpers\ArrayHelper::merge([
+                    'order_id',
+                    'user_id',
+                    'external_id',
+                    'created:datetime',
+                    'updated:datetime',
+                    'total_price:currency',
+                    'status_id',
+                ], $properties) ,
         ]) ?>
     </div>
 </div>

@@ -89,7 +89,7 @@ class PropertyObject extends \yii\db\ActiveRecord
     /**
      * Получает массив свойств привязанны к объекту
      *
-     * @return \svsoft\yii\modules\properties\components\ObjectProperty[]|null
+     * @return \svsoft\yii\modules\properties\components\ObjectProperty[]
      */
     public function getProperties()
     {
@@ -117,34 +117,6 @@ class PropertyObject extends \yii\db\ActiveRecord
 
         return $this->_properties;
     }
-
-    public function getProperties2()
-    {
-        if ($this->_propertyForms === null)
-        {
-            $properties = $this->modelType->getProperties()->indexBy('property_id')->all();
-
-            $values = $this->propertyValues;
-
-            $groupByPropertyId = [];
-            foreach($values as $value)
-            {
-                $groupByPropertyId[$value['property_id']][] = $value;
-            }
-
-            foreach($properties as $propertyId => $property)
-            {
-                $values = ArrayHelper::getValue($groupByPropertyId, $propertyId, []);
-
-                $ObjectProperty = new ObjectProperty($this, $property, $values);
-
-                $this->_propertyForms[$propertyId] = $ObjectProperty;
-            }
-        }
-
-        return $this->_propertyForms;
-    }
-
 
     /**
      * @param $propertyId
@@ -317,18 +289,25 @@ class PropertyObject extends \yii\db\ActiveRecord
         return $this->hasOne($class, [$class::primaryKey()[0] => 'model_id']);
     }
 
-    public function afterDelete()
+    /**
+     * До удаления удаляем все привязанные значения свойств
+     *
+     * @return bool
+     */
+    public function beforeDelete()
     {
-        parent::afterDelete();
+        if (!parent::beforeDelete())
+            return false;
 
         // Удаляем все значения всех свойств
-        foreach($this->_properties as $property)
+        foreach($this->properties as $property)
         {
             foreach($property->propertyValues as $propertyValue)
             {
                 $propertyValue->delete();
             }
         }
-    }
 
+        return true;
+    }
 }

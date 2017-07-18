@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use svsoft\yii\modules\properties\components\PropertyHelper;
 
 /* @var $this yii\web\View */
 /* @var $model svsoft\yii\modules\properties\models\data\PropertyGroup */
@@ -16,7 +17,7 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'model_type_id')->textInput() ?>
+        <?= $form->field($model, 'model_type_id')->dropDownList(PropertyHelper::getModelTypeList('-Выберите тип объекта-')) ?>
 
     </div>
     <div class="box-footer">

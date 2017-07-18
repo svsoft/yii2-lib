@@ -118,14 +118,21 @@ class ProductController extends Controller
 
         $categories = CatalogHelper::getCategoryList(false);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->product_id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-                'categories' => $categories,
-            ]);
+        if ($model->load(Yii::$app->request->post()))
+        {
+            $model->getUploadForm()->load(Yii::$app->request->post());
+            $model->getUploadForm()->uploadedFiles = UploadedFile::getInstances($model->getUploadForm(), 'uploadedFiles');
+
+            if ($model->save())
+                return $this->redirect(['view', 'id' => $model->product_id]);
+
+            var_dump($model->errors);
         }
+
+        return $this->render('update', [
+            'model' => $model,
+            'categories' => $categories,
+        ]);
     }
 
     /**

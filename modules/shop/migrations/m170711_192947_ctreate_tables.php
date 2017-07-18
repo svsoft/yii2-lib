@@ -15,6 +15,7 @@ class m170711_192947_ctreate_tables extends Migration
             'created'=> $this->integer()->notNull(),
             'updated'=> $this->integer()->notNull(),
             'status_id' => $this->smallInteger()->unsigned(),
+            'total_price' => $this->float()
         ]);
 
         // Таблица товаров

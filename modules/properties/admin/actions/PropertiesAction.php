@@ -4,6 +4,7 @@ namespace svsoft\yii\modules\properties\admin\actions;
 
 use svsoft\yii\modules\catalog\models\Category;
 use svsoft\yii\modules\properties\models\data\Property;
+use svsoft\yii\modules\properties\models\data\PropertyGroup;
 use svsoft\yii\modules\properties\models\data\PropertyModelType;
 use svsoft\yii\modules\properties\models\data\PropertyObject;
 use svsoft\yii\modules\properties\models\forms\PropertyForm;
@@ -61,18 +62,26 @@ class PropertiesAction extends Action
 
         $properties = $modelType->properties;
 
+        $groups = $modelType->getPropertyGroups()->indexBy('group_id')->all();
+
 
         /**
          * @var $propertyForms PropertyForm[]
          */
         $propertyForms = [];
+        $propertiesWithoutGroup = [];
         foreach($properties as $property)
         {
             $propertyForm = PropertyForm::createForm($object, $property);
 
-            $propertyForms[] = $propertyForm;
-        }
+            $propertyForms[$property->property_id] = $propertyForm;
 
+            // СОбираем войства без группы
+            if (!$property->group_id)
+            {
+                $propertiesWithoutGroup[] = $property;
+            }
+        }
 
         if (Yii::$app->request->isPost)
         {
@@ -92,11 +101,20 @@ class PropertiesAction extends Action
                 $this->controller->refresh();
         }
 
+        if ($propertiesWithoutGroup)
+        {
+            $groupNull = new PropertyGroup();
+            $groupNull->name = 'Общие';
+            $groupNull->setProperties($propertiesWithoutGroup);
+            array_unshift($groups, $groupNull);
+        }
+
         // $this->view = '@svs-properties/admin/views/actions/properties';
 
         return $this->controller->render($this->view, [
             'propertyForms'=>$propertyForms,
-            'model' => $model
+            'model' => $model,
+            'groups' => $groups,
         ]);
     }
 

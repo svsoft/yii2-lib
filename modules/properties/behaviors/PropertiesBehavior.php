@@ -16,7 +16,7 @@ use yii\db\ActiveRecord;
  * Class Tree
  * @package app\behaviors
  *
- * @property \yii\db\ActiveRecord|Properties $owner
+ * @property PropertiesTrait $owner
  */
 class PropertiesBehavior extends Behavior
 {
@@ -25,10 +25,6 @@ class PropertiesBehavior extends Behavior
      */
     public $getId;
 
-    /**
-     * @var PropertiesTrait
-     */
-    public $owner;
 
     /**
      * Название атрибуто которое будет использоваться в качестви имени модели
@@ -51,6 +47,7 @@ class PropertiesBehavior extends Behavior
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
             ActiveRecord::EVENT_AFTER_VALIDATE => 'afterValidate',
+            ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete'
         ];
     }
 
@@ -100,6 +97,11 @@ class PropertiesBehavior extends Behavior
         // Проверяем надо ли сохранять свойства
         if ($this->owner->savePropertiesTogether)
             $this->owner->getPropertyObject()->saveProperties();
+    }
+
+    public function beforeDelete()
+    {
+        $this->owner->getPropertyObject()->delete();
     }
 
     public function getPropertiesBehavior()

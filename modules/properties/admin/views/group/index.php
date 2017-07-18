@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use svsoft\yii\modules\properties\components\PropertyHelper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel svsoft\yii\modules\properties\models\PropertyGroupSearch */
@@ -26,7 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'group_id',
                 'name',
                 'slug',
-                'model_type_id',
+                //'model_type_id',
+                [
+                    'attribute' => 'model_type_id',
+                    'value' => 'modelType.name',
+                    'filter' => PropertyHelper::getModelTypeList()
+                    ,
+                ],
 
                 ['class' => 'yii\grid\ActionColumn'],
             ],

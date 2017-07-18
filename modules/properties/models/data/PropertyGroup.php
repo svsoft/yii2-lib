@@ -6,6 +6,8 @@ use Yii;
 use yii\behaviors\SluggableBehavior;
 
 /**
+ * TODO: сделать слуг уникальным и во всех остальных сущностях
+ *
  * This is the model class for table "property_group".
  *
  * @property int $group_id
@@ -18,6 +20,9 @@ use yii\behaviors\SluggableBehavior;
  */
 class PropertyGroup extends \yii\db\ActiveRecord
 {
+
+    private $_properties;
+
     /**
      * @inheritdoc
      */
@@ -68,6 +73,11 @@ class PropertyGroup extends \yii\db\ActiveRecord
      */
     public function getProperties()
     {
+        if ($this->isNewRecord)
+        {
+            return $this->_properties;
+        }
+
         return $this->hasMany(Property::className(), ['group_id' => 'group_id']);
     }
 
@@ -78,4 +88,11 @@ class PropertyGroup extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PropertyModelType::className(), ['model_type_id' => 'model_type_id']);
     }
+
+
+    public function setProperties($properties)
+    {
+        $this->_properties = $properties;
+    }
+
 }

@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 /* @var $model \svsoft\yii\modules\shop\models\Order  */
 /* @var $propertyForms \svsoft\yii\modules\properties\models\forms\PropertyForm[] */
+/* @var $groups \svsoft\yii\modules\properties\models\data\PropertyGroup[] */
 
 $this->title = 'Редактирование свойств заказа: ' . $model->order_id;
 
@@ -16,7 +17,7 @@ $this->params['breadcrumbs'][] = 'Properties';
 
     <?=$this->render('_update_menu', ['model' => $model])?>
 
-    <?=$this->render('@svs-properties/admin/views/actions/_properties_form', ['propertyForms' => $propertyForms])?>
+    <?=$this->render('@svs-properties/admin/views/actions/_properties_form', ['propertyForms' => $propertyForms, 'groups'=>$groups])?>
 
 </div>
 

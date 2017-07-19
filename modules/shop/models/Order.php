@@ -44,7 +44,7 @@ class Order extends \yii\db\ActiveRecord
             [['user_id', 'created', 'updated', 'status_id'], 'integer'],
             [['total_price'], 'number'],
             [['external_id'], 'string', 'max' => 255],
-            ['status', 'default', Order::STATUS_NEW]
+            ['status', 'default', 'value'=>Order::STATUS_NEW]
         ];
     }
 

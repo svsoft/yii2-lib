@@ -6,6 +6,7 @@ use svsoft\yii\modules\properties\models\data\Property;
 use svsoft\yii\modules\properties\models\data\PropertyModelType;
 use svsoft\yii\modules\properties\models\data\PropertyObject;
 use svsoft\yii\modules\properties\models\data\PropertyValue;
+use svsoft\yii\modules\properties\models\forms\PropertyForm;
 use svsoft\yii\modules\properties\queries\PropertyObjectQuery;
 use yii\base\Exception;
 use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
@@ -33,14 +34,7 @@ trait PropertiesTrait
     /**
      * @var PropertyModelType
      */
-    static private $modelType;
-
-    /**
-     * флаг сохранения свойств вместе с моделью
-     *
-     * @var bool
-     */
-    private $savePropertiesTogether = false;
+    static protected $modelType;
 
 
     /**
@@ -69,7 +63,7 @@ trait PropertiesTrait
             }
 
             // Устанавливаем сохранение свойств всместе с моделью
-            $this->savePropertiesTogether = true;
+            $this->getPropertiesBehavior()->savePropertiesTogether = true;
         }
 
 
@@ -116,7 +110,7 @@ trait PropertiesTrait
     /**
      * @param $slug
      *
-     * @return \svsoft\yii\modules\properties\components\ObjectProperty|null
+     * @return PropertyForm
      */
     public function getPropertyBySlug($slug)
     {
@@ -141,16 +135,6 @@ trait PropertiesTrait
     public function getPropertyAsList()
     {
         return $this->getPropertyObject()->getPropertyAsList();
-    }
-
-    /**
-     * геттер для self::savePropertiesTogether
-     *
-     * @return mixed
-     */
-    public function getSavePropertiesTogether()
-    {
-        return $this->savePropertiesTogether;
     }
 
     /**

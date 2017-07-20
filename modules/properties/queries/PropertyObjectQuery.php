@@ -147,6 +147,6 @@ class PropertyObjectQuery extends ActiveQuery
         $query->groupBy($po.'.object_id');;
 
         if (count($where) > 2)
-            $query->having(["count({$pv}.object_id)"=>count($where) - 1]);
+            $query->having(["count({$po}.model_id)"=>count($where) - 1]);
     }
 }

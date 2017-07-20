@@ -6,6 +6,9 @@ use Yii;
 use yii\db\ActiveRecord;
 
 /**
+ *
+ * TODO: Надо сделать при сохранении удаление файлов которых нет в атрибуте, а в модели для загрузки файлов убрать
+ *
  * Created by PhpStorm.
  * User: viktor
  * Date: 01.07.2017
@@ -36,6 +39,10 @@ class FileAttributeBehavior extends Behavior
         {
             $this->attributes = [$this->attributes];
         }
+
+        $this->fileDirPath  = Yii::getAlias($this->fileDirPath);
+        $this->blankSrc     = Yii::getAlias($this->blankSrc);
+        $this->webDirPath   = Yii::getAlias($this->webDirPath);
     }
 
     /**
@@ -107,5 +114,4 @@ class FileAttributeBehavior extends Behavior
     {
         return $this;
     }
-
 }

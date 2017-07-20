@@ -25,6 +25,13 @@ class PropertiesBehavior extends Behavior
      */
     public $getId;
 
+    /**
+     * флаг сохранения свойств вместе с моделью
+     *
+     * @var bool
+     */
+    public $savePropertiesTogether = false;
+
 
     /**
      * Название атрибуто которое будет использоваться в качестви имени модели
@@ -61,6 +68,7 @@ class PropertiesBehavior extends Behavior
         return call_user_func($this->getId, $this->owner);
     }
 
+
     /**
      * После валидации модели валидируем примязанные свойства
      *
@@ -68,7 +76,10 @@ class PropertiesBehavior extends Behavior
      */
     public function afterValidate()
     {
-        if (!$this->owner->savePropertiesTogether)
+        if ($this->owner->isNewRecord)
+            $this->savePropertiesTogether = true;
+
+        if (!$this->savePropertiesTogether)
             return;
 
         $propertyObject = $this->owner->propertyObject;
@@ -79,15 +90,13 @@ class PropertiesBehavior extends Behavior
 
     public function afterInsert()
     {
-        // Проверяем надо ли сохранять свойства
-        if ($this->owner->savePropertiesTogether)
-        {
-            // Проставляем в propertyObject ид вставленой в БД модели и сохраняем содкль
-            $propertyObject = $this->owner->getPropertyObject();
-            $propertyObject->model_id = $this->getModelId();
+        $this->savePropertiesTogether = true;
 
-            $propertyObject->save();
-        }
+        // Проставляем в propertyObject ид вставленой в БД модели и сохраняем содкль
+        $propertyObject = $this->owner->getPropertyObject();
+        $propertyObject->model_id = $this->getModelId();
+
+        $propertyObject->save();
 
         $this->afterSave();
     }
@@ -95,7 +104,7 @@ class PropertiesBehavior extends Behavior
     public function afterSave()
     {
         // Проверяем надо ли сохранять свойства
-        if ($this->owner->savePropertiesTogether)
+        if ($this->savePropertiesTogether)
             $this->owner->getPropertyObject()->saveProperties();
     }
 

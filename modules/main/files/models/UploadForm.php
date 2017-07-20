@@ -119,7 +119,6 @@ class UploadForm extends Model
 
             FileHelper::createDirectory($this->fileDirPath);
 
-            // var_dump($this->fileDirPath . '/' . $filename ); die();
 
             $file->saveAs($this->fileDirPath . '/' . $filename );
         }

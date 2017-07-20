@@ -11,7 +11,7 @@ use Yii;
  * @property FileAttributeBehavior fileAttributeBehavior
  * @property string fileDirPath
  * @property string webDirPath
- *
+ * @method FileAttributeBehavior getFileAttributeBehavior()
  * @package svsoft\yii\modules\main\files
  */
 trait FileAttributeTrait

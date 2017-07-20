@@ -96,8 +96,6 @@ class ProductController extends Controller
 
             if ($model->save())
                 return $this->redirect(['view', 'id' => $model->product_id]);
-
-            var_dump($model->errors);
         }
 
         return $this->render('create', [

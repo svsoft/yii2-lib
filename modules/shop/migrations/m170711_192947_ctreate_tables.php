@@ -29,6 +29,7 @@ class m170711_192947_ctreate_tables extends Migration
             'count'=> $this->float(),
             'created'=> $this->integer()->notNull(),
             'updated'=> $this->integer()->notNull(),
+            'total_price' => $this->float()
         ]);
 
         $this->addForeignKey('sci_order_id', 'shop_cart_item', 'order_id', 'shop_order', 'order_id', 'RESTRICT');

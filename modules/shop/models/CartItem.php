@@ -3,6 +3,8 @@
 namespace svsoft\yii\modules\shop\models;
 
 use svsoft\yii\modules\catalog\models\Product;
+use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
+use svsoft\yii\modules\properties\traits\PropertiesTrait;
 use Yii;
 use yii\base\Exception;
 use yii\behaviors\TimestampBehavior;
@@ -19,6 +21,8 @@ use yii\behaviors\TimestampBehavior;
  * @property double $count
  * @property integer $created
  * @property integer $updated
+ * @property integer $total_price
+ *
  *
  * @property Order $order
  * @property Product $product
@@ -26,6 +30,8 @@ use yii\behaviors\TimestampBehavior;
  */
 class CartItem extends \yii\db\ActiveRecord
 {
+    use PropertiesTrait;
+
     /**
      * @inheritdoc
      */
@@ -74,6 +80,11 @@ class CartItem extends \yii\db\ActiveRecord
                 'class'=>TimestampBehavior::className(),
                 'createdAtAttribute'=>'created',
                 'updatedAtAttribute'=>'updated',
+            ],
+            [
+                'class' => PropertiesBehavior::className(),
+                'getId' => function($model) { return $model->item_id;  },
+                'nameAttribute' => 'product_id',
             ],
         ];
     }

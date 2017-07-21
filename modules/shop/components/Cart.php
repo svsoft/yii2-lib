@@ -43,10 +43,11 @@ class Cart extends Component
     {
         $cartItem = $this->getItemByProductId($product_id);
 
-        $cartItem->count += $count;
-
         if (!$cartItem->price)
             $cartItem->price = $cartItem->product->price;
+
+        $cartItem->count += $count;
+        $cartItem->total_price += $cartItem->price * $count;
 
         if ($cartItem->count<=0)
         {
@@ -96,6 +97,7 @@ class Cart extends Component
     {
         $cartItem = $this->getItemByProductId($product_id);
 
+        $cartItem->total_price += $cartItem->price *  ($count - $cartItem->count);
         $cartItem->count = $count;
 
         if ($cartItem->count<=0)
@@ -151,6 +153,11 @@ class Cart extends Component
         return $this->cartItems[$withProducts];
     }
 
+    function resetCartItems()
+    {
+        $this->cartItems = [];
+    }
+
 
     /**
      * Возвращает количество товаров в корзине
@@ -172,6 +179,7 @@ class Cart extends Component
     }
 
     /**
+     * TODO: Поменять имя - опечатка
      * Возвращает количество товаров в корзине
      *
      * @return float|int
@@ -184,7 +192,7 @@ class Cart extends Component
 
         foreach($items as $item)
         {
-            $price += $item->price * $item->count;
+            $price += $item->total_price;
         }
 
         return $price;

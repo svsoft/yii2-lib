@@ -64,7 +64,7 @@ trait FileAttributeTrait
         if ($this->$attribute)
             return unserialize($this->$attribute);
 
-        return null;
+        return [];
     }
 
     public function getFilesArraySrc()

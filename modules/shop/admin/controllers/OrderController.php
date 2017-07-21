@@ -3,9 +3,11 @@
 namespace svsoft\yii\modules\shop\admin\controllers;
 
 use svsoft\yii\modules\properties\admin\actions\PropertiesAction;
+use svsoft\yii\modules\shop\models\CartItem;
 use Yii;
 use svsoft\yii\modules\shop\models\Order;
 use svsoft\yii\modules\shop\models\OrderSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -66,8 +68,17 @@ class OrderController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $model->getCartItems()->with('product'),
+        ]);
+
+        $dataProvider->pagination->setPageSize(1000);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'dataProvider' => $dataProvider,
         ]);
     }
 

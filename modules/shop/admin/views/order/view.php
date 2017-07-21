@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model svsoft\yii\modules\shop\models\Order */
@@ -40,5 +41,24 @@ $this->params['breadcrumbs'][] = $this->title;
                     'status_id',
                 ], $properties) ,
         ]) ?>
+
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'layout' => "{items}\n{summary}\n{pager}",
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+
+                'item_id',
+                'product_id',
+                'product.name',
+                'price:currency',
+                'count',
+                'total_price:currency',
+                // 'created',
+                // 'updated',
+
+                ['class' => 'yii\grid\ActionColumn'],
+            ],
+        ]); ?>
     </div>
 </div>

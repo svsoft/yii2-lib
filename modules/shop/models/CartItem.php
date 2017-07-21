@@ -61,13 +61,14 @@ class CartItem extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'item_id' => 'Item ID',
-            'product_id' => 'Product ID',
-            'order_id' => 'Order ID',
-            'user_id' => 'User ID',
-            'session_id' => 'Session ID',
-            'price' => 'Price',
-            'count' => 'Count',
+            'item_id' => 'ИД',
+            'product_id' => 'Ид товара',
+            'order_id' => 'Ид Заказа',
+            'user_id' => 'Ид пользователя',
+            'session_id' => 'Ид сессии',
+            'price' => 'Цена',
+            'count' => 'Количиства',
+            'total_price' => 'Итоговая цена',
             'created' => 'Created',
             'updated' => 'Updated',
         ];

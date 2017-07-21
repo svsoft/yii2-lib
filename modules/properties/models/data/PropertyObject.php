@@ -95,6 +95,8 @@ class PropertyObject extends \yii\db\ActiveRecord
     {
         if ($this->_properties === null)
         {
+            $this->_properties = [];
+
             $properties = $this->modelType->getProperties()->indexBy('property_id')->all();
 
             $propertyValues = $this->propertyValues;

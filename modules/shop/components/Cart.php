@@ -43,7 +43,7 @@ class Cart extends Component
     {
         $cartItem = $this->getItemByProductId($product_id);
 
-        if (!$cartItem->price)
+        if ($cartItem->price === null)
             $cartItem->price = $cartItem->product->price;
 
         $cartItem->count += $count;

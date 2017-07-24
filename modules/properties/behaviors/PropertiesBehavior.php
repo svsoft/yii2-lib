@@ -51,7 +51,7 @@ class PropertiesBehavior extends Behavior
     public function events()
     {
         return [
-            ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
+            ActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
             ActiveRecord::EVENT_AFTER_VALIDATE => 'afterValidate',
             ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete'
@@ -76,9 +76,6 @@ class PropertiesBehavior extends Behavior
      */
     public function afterValidate()
     {
-        if ($this->owner->isNewRecord)
-            $this->savePropertiesTogether = true;
-
         if (!$this->savePropertiesTogether)
             return;
 
@@ -88,21 +85,16 @@ class PropertiesBehavior extends Behavior
             $this->owner->addError('properties', 'Properties validation error');
     }
 
-    public function afterInsert()
-    {
-        $this->savePropertiesTogether = true;
-
-        // Проставляем в propertyObject ид вставленой в БД модели и сохраняем содкль
-        $propertyObject = $this->owner->getPropertyObject();
-        $propertyObject->model_id = $this->getModelId();
-
-        $propertyObject->save();
-
-        $this->afterSave();
-    }
-
     public function afterSave()
     {
+        $propertyObject = $this->owner->getPropertyObject();
+        if ($propertyObject->isNewRecord)
+        {
+            $propertyObject->model_id = $this->getModelId();
+
+            $propertyObject->save();
+        }
+
         // Проверяем надо ли сохранять свойства
         if ($this->savePropertiesTogether)
             $this->owner->getPropertyObject()->saveProperties();

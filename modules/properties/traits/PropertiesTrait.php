@@ -36,7 +36,6 @@ trait PropertiesTrait
      */
     static protected $modelType;
 
-
     /**
      * @return PropertyObject
      *
@@ -48,9 +47,6 @@ trait PropertiesTrait
         {
             $modelType = self::getModelType();
 
-            if (!$modelType)
-                throw new Exception(__CLASS__ . ' is not found in PropertyModelType');
-
             $modelId = $this->getModelId();
 
             $attributes = ['model_id' => $modelId, 'model_type_id' => $modelType->model_type_id];
@@ -61,11 +57,10 @@ trait PropertiesTrait
             {
                 $this->propertyObject = new PropertyObject($attributes);
             }
-
-            // Устанавливаем сохранение свойств всместе с моделью
-            $this->getPropertiesBehavior()->savePropertiesTogether = true;
         }
 
+        // Устанавливаем сохранение свойств всместе с моделью
+        $this->getPropertiesBehavior()->savePropertiesTogether = true;
 
         return $this->propertyObject;
     }
@@ -80,6 +75,16 @@ trait PropertiesTrait
     {
         if (!static::$modelType)
             static::$modelType = PropertyModelType::findOne(['class' => __CLASS__]);
+
+        if (!static::$modelType)
+        {
+            $type = new PropertyModelType();
+            $type->name = __CLASS__;
+            $type->class = __CLASS__;
+
+            if ($type->save())
+                static::$modelType = $type;
+        }
 
         if (!static::$modelType)
             throw new Exception(__CLASS__ . ' is not found in PropertyModelType');
@@ -148,7 +153,14 @@ trait PropertiesTrait
         if (!$properties)
             return $query;
 
-        $modelType = self::getModelType();
+        try
+        {
+            $modelType = self::getModelType();
+        }
+        catch(Exception $e)
+        {
+
+        }
 
         if (!$query)
             $query = call_user_func_array([$modelType->class,'find'],[]);

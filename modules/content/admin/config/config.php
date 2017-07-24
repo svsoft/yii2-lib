@@ -9,9 +9,9 @@ $moduleRoute = "/{$parent->id}/{$id}/";
 
 return [
     'adminMenu'=>[
-        ['label' => 'Контент', 'icon' => 'shopping-cart', 'url' => '#', 'items'=>[
+        ['label' => 'Контент', 'icon' => 'file-text-o', 'url' => '#', 'items'=>[
             ['label' => 'Документы', 'icon' => 'folder-o', 'url' => [$moduleRoute . 'document/documents']],
-            //['label' => 'Корзина', 'icon' => 'folder-o', 'url' => [$moduleRoute . 'cart/index']],
+            ['label' => 'Блоки', 'icon' => 'folder-o', 'url' => [$moduleRoute . 'content-block/index']],
         ]],
     ]
 ];

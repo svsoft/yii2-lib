@@ -34,6 +34,7 @@ class m170723_195647_ctreate_tables extends Migration
             'name' => $this->string()->notNull(),
             'slug' => $this->string()->notNull(),
             'content' => $this->text(),
+            'format' => $this->smallInteger()->unsigned(),
             'created' => $this->integer()->notNull(),
             'updated' => $this->integer()->notNull(),
         ]);

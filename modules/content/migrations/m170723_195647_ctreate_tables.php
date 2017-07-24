@@ -13,6 +13,7 @@ class m170723_195647_ctreate_tables extends Migration
             'parent_id'=> $this->integer()->unsigned(),
             'name' => $this->string()->notNull(),
             'slug' => $this->string()->notNull(),
+            'slug_chain' => $this->string()->notNull(),
             'children' => $this->boolean()->unsigned(),
             'content' => $this->text(),
             'preview' => $this->text(),

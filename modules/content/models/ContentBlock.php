@@ -3,7 +3,6 @@
 namespace svsoft\yii\modules\content\models;
 
 use Yii;
-use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
 
 /**
@@ -11,7 +10,7 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property integer $block_id
  * @property string $name
- * @property string $slug
+ * @property string $key
  * @property string $content
  * @property integer $created
  * @property integer $updated
@@ -38,10 +37,11 @@ class ContentBlock extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'slug'], 'required'],
+            [['name', 'key'], 'required'],
             [['content'], 'string'],
             [['created', 'updated','format'], 'integer'],
-            [['name', 'slug'], 'string', 'max' => 255],
+            [['name', 'key'], 'string', 'max' => 255],
+            ['key','unique'],
         ];
     }
 
@@ -51,26 +51,19 @@ class ContentBlock extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'block_id' => 'Block ID',
-            'name' => 'Name',
-            'slug' => 'Slug',
-            'content' => 'Content',
-            'created' => 'Created',
-            'updated' => 'Updated',
+            'block_id' => 'Ид',
+            'name' => 'Название',
+            'key' => 'Уникальный ключ',
+            'content' => 'Контент',
+            'format' => 'Формат содержимого',
+            'created' => 'Дата добавления',
+            'updated' => 'Дата редактирования',
         ];
     }
 
     public function behaviors()
     {
         return [
-            [
-                // TODO: Сделать уникально в рамках родителя
-                'class' => SluggableBehavior::className(),
-                'attribute' => 'name',
-                'slugAttribute' => 'slug',
-                'immutable' => true,
-                'ensureUnique' => true,
-            ],
             [
                 'class'=>TimestampBehavior::className(),
                 'createdAtAttribute'=>'created',

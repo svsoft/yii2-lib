@@ -88,8 +88,11 @@ class DocumentController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'parentChain' => $this->getParentChain($model),
         ]);
     }
 
@@ -105,6 +108,13 @@ class DocumentController extends Controller
         $model = new Document(['active' => 1]);
 
         $model->parent_id = $parent_id;
+
+        if ($copy = Yii::$app->request->get('copy'))
+        {
+            $copyModel = $this->findModel($copy);
+
+            $model->setAttributes(ArrayHelper::filter($copyModel, ['parent_id','name','slug','children','content','preview','title','h1','description']));
+        }
 
         if ($model->load(Yii::$app->request->post()))
         {

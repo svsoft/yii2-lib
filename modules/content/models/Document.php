@@ -40,9 +40,6 @@ class Document extends \yii\db\ActiveRecord
     use FileAttributeTrait;
     //use PropertiesTrait;
 
-//    private $updatedFormatted;
-//    private $createdFormatted;
-
     /**
      * @inheritdoc
      */
@@ -64,8 +61,7 @@ class Document extends \yii\db\ActiveRecord
             [['content', 'preview', 'images', 'description'], 'string'],
             [['name', 'slug', 'title', 'h1'], 'string', 'max' => 255],
             [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => Document::className(), 'targetAttribute' => ['parent_id' => 'document_id']],
-            //[['updatedFormatted'], 'date', 'format'=>'php:d.m.Y','timestampAttribute'=>'updated'],
-            //[['createdFormatted'], 'date', 'format'=>'php:d.m.Y','timestampAttribute'=>'created']
+            ['slug_chain','unique']
 
         ];
     }
@@ -108,8 +104,33 @@ class Document extends \yii\db\ActiveRecord
         if (!$this->h1)
             $this->h1 = $this->title;
 
+        $this->fillSlugChain();
 
         return true;
+    }
+
+    public function afterValidate()
+    {
+        parent::afterValidate();
+
+        // Добавляем ошибки от slug_chain в slug
+        if ($this->getFirstError('slug_chain'))
+            $this->addError('slug', $this->getFirstError('slug_chain'));
+    }
+
+    public function fillSlugChain()
+    {
+        $chain = $this->getParentChain();
+
+        $slug_chain = '';
+        foreach($chain as $document)
+        {
+            $slug_chain .= $document->slug . '/';
+        }
+
+        $slug_chain .= $this->slug;
+
+        $this->slug_chain = $slug_chain;
     }
 
     /**
@@ -122,6 +143,7 @@ class Document extends \yii\db\ActiveRecord
             'parent_id' => 'Ид родителя',
             'name' => 'Название',
             'slug' => 'Url',
+            'slug_chain' => 'Url',
             'children' => 'Является разделом',
             'content' => 'Контент',
             'preview' => 'Анонс',
@@ -135,6 +157,7 @@ class Document extends \yii\db\ActiveRecord
             'title' => 'Заголовок окна',
             'h1' => 'Заголовок страницы H1',
             'description' => 'Мета-описание',
+            'documents' => 'Документы'
         ];
     }
 
@@ -186,18 +209,6 @@ class Document extends \yii\db\ActiveRecord
     {
         if (!parent::beforeSave($insert))
             return false;
-
-        $chain = $this->getParentChain();
-
-        $slug_chain = '';
-        foreach($chain as $document)
-        {
-            $slug_chain .= $document->slug . '.';
-        }
-
-        $slug_chain .= $this->slug;
-
-        $this->slug_chain = $slug_chain;
 
         return true;
     }

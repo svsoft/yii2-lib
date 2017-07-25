@@ -47,6 +47,11 @@ class Documents extends Component
         return $this->find()->andWhere(['slug'=>$slug, 'parent_id'=>$parent_id])->one();
     }
 
+    /**
+     * @param $slug
+     *
+     * @return Document
+     */
     function findOneBySlugChain($slug)
     {
         return $this->find()->andWhere(['slug_chain'=>$slug])->one();

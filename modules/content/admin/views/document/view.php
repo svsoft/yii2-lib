@@ -7,8 +7,12 @@ use yii\widgets\DetailView;
 /* @var $model svsoft\yii\modules\content\models\Document */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Documents', 'url' => ['index']];
+
+foreach($parentChain as $document)
+    $this->params['breadcrumbs'][] = ['label' => $document->name, 'url' => ['document/documents', 'parent_id'=>$document->document_id]];
+
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="document-view box box-primary">
     <div class="box-header">

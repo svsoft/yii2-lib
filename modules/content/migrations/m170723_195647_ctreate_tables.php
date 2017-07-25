@@ -32,7 +32,7 @@ class m170723_195647_ctreate_tables extends Migration
         $this->createTable('content_block', [
             'block_id' => $this->primaryKey()->unsigned(),
             'name' => $this->string()->notNull(),
-            'slug' => $this->string()->notNull(),
+            'key' => $this->string()->notNull(),
             'content' => $this->text(),
             'format' => $this->smallInteger()->unsigned(),
             'created' => $this->integer()->notNull(),

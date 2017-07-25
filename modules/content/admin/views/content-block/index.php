@@ -25,12 +25,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 'block_id',
                 'name',
-                'slug',
+                'key',
                 'content:ntext',
                 'created',
                 // 'updated',
 
-                ['class' => 'yii\grid\ActionColumn'],
+                ['class' => 'yii\grid\ActionColumn',
+                ],
             ],
         ]); ?>
     </div>

@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'attributes' => [
                 'block_id',
                 'name',
-                'slug',
+                'key',
                 'content:ntext',
                 'format',
                 'created',

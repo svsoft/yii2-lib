@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace svsoft\yii\modules\admin\assets;
+namespace svsoft\yii\modules\main\admin\assets;
 
 use yii\web\AssetBundle;
 
@@ -15,10 +15,10 @@ use yii\web\AssetBundle;
  */
 class AppAsset extends AssetBundle
 {
-    public $sourcePath = '@app/modules/admin/assets';
+    public $sourcePath = '@svs-main/admin/assets';
 
     public $css = [
-        //'css/admin.css',
+        'css/admin.css',
     ];
     public $js = [
         //'js/admin.js',
@@ -27,5 +27,6 @@ class AppAsset extends AssetBundle
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
         'yii\bootstrap\BootstrapPluginAsset',
+        'svsoft\yii\modules\main\admin\assets\AdminLtePluginAsset',
     ];
 }

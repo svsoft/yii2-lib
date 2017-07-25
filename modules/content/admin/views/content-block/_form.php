@@ -18,10 +18,7 @@ use svsoft\yii\modules\content\models\ContentBlock;
 
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
-
-
-
+        <?= $form->field($model, 'key')->textInput(['maxlength' => true]) ?>
 
         <div class="nav-tabs-custom">
 

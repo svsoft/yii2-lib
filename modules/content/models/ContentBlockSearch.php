@@ -19,7 +19,7 @@ class ContentBlockSearch extends ContentBlock
     {
         return [
             [['block_id', 'created', 'updated'], 'integer'],
-            [['name', 'slug', 'content'], 'safe'],
+            [['name', 'key', 'content'], 'safe'],
         ];
     }
 
@@ -64,7 +64,7 @@ class ContentBlockSearch extends ContentBlock
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'slug', $this->slug])
+            ->andFilterWhere(['like', 'key', $this->key])
             ->andFilterWhere(['like', 'content', $this->content]);
 
         return $dataProvider;

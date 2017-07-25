@@ -66,11 +66,19 @@ class ContentBlockController extends Controller
         $model = new ContentBlock();
 
         $model->format = ContentBlock::FORMAT_TEXT;
+        $model->key = Yii::$app->request->get('key');
 
         if ($model->load(Yii::$app->request->post()))
         {
-            if (!Yii::$app->request->post('refresh') && $model->save())
-                return $this->redirect(['view', 'id' => $model->block_id]);
+            if (Yii::$app->request->post('refresh'))
+            {
+                //$model->content = $model->getOldAttribute('content');
+            }
+            else
+            {
+                if ($model->save())
+                    return $this->redirect(['view', 'id' => $model->block_id]);
+            }
         }
 
         return $this->render('create', [
@@ -90,8 +98,15 @@ class ContentBlockController extends Controller
 
         if ($model->load(Yii::$app->request->post()))
         {
-            if (!Yii::$app->request->post('refresh') && $model->save())
-                return $this->redirect(['view', 'id' => $model->block_id]);
+            if (Yii::$app->request->post('refresh'))
+            {
+                //$model->content = $model->getOldAttribute('content');
+            }
+            else
+            {
+                if ($model->save())
+                    return $this->redirect(['view', 'id' => $model->block_id]);
+            }
         }
 
         return $this->render('update', [

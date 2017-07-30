@@ -11,7 +11,6 @@ use yii\base\ModelEvent;
 use yii\db\ActiveRecord;
 
 /**
- * TODO: Добавить событие после удаления
  *
  * Class Tree
  * @package app\behaviors
@@ -109,5 +108,4 @@ class PropertiesBehavior extends Behavior
     {
         return $this;
     }
-
 }

@@ -13,6 +13,7 @@ use svsoft\yii\modules\properties\models\forms\types\PropertyString;
 use Yii;
 use yii\base\Exception;
 use yii\behaviors\SluggableBehavior;
+use yii\db\Transaction;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -44,6 +45,11 @@ class Property extends \yii\db\ActiveRecord
 
     static public $types = [];
 
+
+    /**
+     * @var Transaction
+     */
+    private $transaction;
     /**
      * Возвращает название колонки в таблице property_value где хранятся значения типа $type
      *
@@ -133,8 +139,6 @@ class Property extends \yii\db\ActiveRecord
 
         return self::$types[$type];
     }
-
-
 
     /**
      * @inheritdoc
@@ -252,5 +256,43 @@ class Property extends \yii\db\ActiveRecord
     static function findActive()
     {
         return parent::find()->where(['active'=>1]);
+    }
+
+    /**
+     * Открывает транзакцию которая закрывактся в afterSave
+     *
+     * @param bool $insert
+     *
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert))
+            return false;
+
+        $this->transaction = Yii::$app->db->beginTransaction();
+
+        return true;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if (!$insert)
+        {
+            if (isset($changedAttributes['type']) && ($changedAttributes['type'] != $this->type))
+            {
+                $currentColumn = self::columnNameByType($changedAttributes['type']);
+                $nextColumn = self::columnNameByType($this->type);
+
+
+                if (!PropertyValue::updateAll([$nextColumn => new \yii\db\Expression("{$currentColumn}"), $currentColumn=>null], ['property_id'=>$this->property_id]))
+                    $this->transaction->rollback();
+            }
+        }
+
+        if ($this->transaction->getIsActive())
+            $this->transaction->commit();
     }
 }

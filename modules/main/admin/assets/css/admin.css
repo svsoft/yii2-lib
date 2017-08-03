@@ -1,2 +1,5 @@
 .grid-view .button { margin-right: 2px; }
 .button-separator { display: inline-block; padding-right: 10px; }
+
+.color-delete { color: #dd4b39; }
+.color-add { color: #008d4c; }

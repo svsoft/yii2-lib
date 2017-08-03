@@ -155,7 +155,7 @@ class Property extends \yii\db\ActiveRecord
     {
         return [
             [['model_type_id', 'group_id', 'type', 'multiple', 'active'], 'integer'],
-            [['model_type_id', 'type','name'], 'required'],
+            [['model_type_id', 'type','name', 'group_id'], 'required'],
             [['name', 'slug'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => PropertyGroup::className(), 'targetAttribute' => ['group_id' => 'group_id']],
             [['model_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PropertyModelType::className(), 'targetAttribute' => ['model_type_id' => 'model_type_id']],

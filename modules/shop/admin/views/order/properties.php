@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = 'Properties';
 
     <?=$this->render('_update_menu', ['model' => $model])?>
 
-    <?=$this->render('@svs-properties/admin/views/actions/_properties_form', ['propertyForms' => $propertyForms, 'groups'=>$groups])?>
+    <?=$this->render('@svs-properties/admin/views/actions/_properties_form', ['propertyForms' => $propertyForms,'object'=>$object])?>
 
 </div>
 

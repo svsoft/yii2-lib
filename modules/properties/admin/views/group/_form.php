@@ -19,6 +19,8 @@ use svsoft\yii\modules\properties\components\PropertyHelper;
 
         <?= $form->field($model, 'model_type_id')->dropDownList(PropertyHelper::getModelTypeList('-Выберите тип объекта-')) ?>
 
+        <?= $form->field($model, 'require')->checkbox() ?>
+
     </div>
     <div class="box-footer">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>

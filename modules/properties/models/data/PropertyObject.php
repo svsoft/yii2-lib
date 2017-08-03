@@ -10,6 +10,7 @@ use svsoft\yii\modules\properties\queries\PropertyObjectQuery;
 use svsoft\yii\modules\properties\traits\PropertiesTrait;
 use Yii;
 use yii\base\Exception;
+use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -25,6 +26,8 @@ use yii\helpers\ArrayHelper;
  * @property PropertiesTrait $model
  * @property Product $product
  * @property PropertyForm[] $properties
+ * @property PropertyGroup[] $linkedGroups
+ * @property PropertyGroup[] $groupsWithProperties
  *
  */
 class PropertyObject extends \yii\db\ActiveRecord
@@ -35,7 +38,12 @@ class PropertyObject extends \yii\db\ActiveRecord
      */
     private $_properties;
 
-    private $_propertyForms;
+    /**
+     * Привязанные группы, могут быть не сохраненные
+     *
+     * @var
+     */
+    private $_groups;
 
     /**
      * @inheritdoc
@@ -97,7 +105,7 @@ class PropertyObject extends \yii\db\ActiveRecord
         {
             $this->_properties = [];
 
-            $properties = $this->modelType->getProperties()->indexBy('property_id')->all();
+            $groups = $this->getGroupsWithProperties();
 
             $propertyValues = $this->propertyValues;
 
@@ -107,18 +115,22 @@ class PropertyObject extends \yii\db\ActiveRecord
                 $groupByPropertyId[$value['property_id']][] = $value;
             }
 
-            foreach($properties as $propertyId => $property)
+            foreach($groups as $group)
             {
-                $values = ArrayHelper::getValue($groupByPropertyId, $propertyId, []);
+                foreach($group->activeProperties as $propertyId => $property)
+                {
+                    $values = ArrayHelper::getValue($groupByPropertyId, $propertyId, []);
 
-                $PropertyForm = PropertyForm::createForm($this, $property, $values);
+                    $PropertyForm = PropertyForm::createForm($this, $property, $values);
 
-                $this->_properties[$propertyId] = $PropertyForm;
+                    $this->_properties[$propertyId] = $PropertyForm;
+                }
             }
         }
 
         return $this->_properties;
     }
+
 
     /**
      * @param $propertyId
@@ -140,6 +152,7 @@ class PropertyObject extends \yii\db\ActiveRecord
     {
         foreach($this->properties as $property)
         {
+            // var_dump($property->property->slug);
             if ($property->property->slug == $slug)
                 return $property;
         }
@@ -195,6 +208,10 @@ class PropertyObject extends \yii\db\ActiveRecord
                 }
             }
         }
+
+        // привязываем группы к объектам
+        foreach($this->_groups as $group)
+            $this->link('linkedGroups', $group);
     }
 
     public function validateProperties()
@@ -222,7 +239,6 @@ class PropertyObject extends \yii\db\ActiveRecord
         if (!parent::beforeValidate())
             return false;
 
-
         return true;
     }
 
@@ -246,7 +262,7 @@ class PropertyObject extends \yii\db\ActiveRecord
             }
         }
 
-        return true;
+        return !$this->hasErrors();
     }
 
     /**
@@ -313,4 +329,62 @@ class PropertyObject extends \yii\db\ActiveRecord
 
         return true;
     }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getLinkedGroups()
+    {
+        return $this->hasMany(PropertyGroup::className(), ['group_id' => 'group_id'])
+            ->viaTable('property_object_group', ['object_id' => 'object_id'])->indexBy('group_id');
+    }
+
+    public function getGroupsWithProperties()
+    {
+        if ($this->_groups === null)
+        {
+            // Если запись новая и нет привязвнных груп, то добавляем все
+            if ($this->isNewRecord)
+            {
+                $this->addPropertyGroups();
+            }
+            else
+            {
+                $this->_groups = $this->getLinkedGroups()->with('activeProperties')->all();
+            }
+        }
+
+        return $this->_groups;
+    }
+
+    public function addPropertyGroups($groups = null)
+    {
+        // Если круппы не указаны добавляем все группы относящиеся к типу модели
+        if ($groups === null)
+        {
+            $this->_groups = $this->modelType->getPropertyGroups()->with('activeProperties')->all();
+            return;
+        }
+
+        foreach($groups as $group)
+        {
+            if ($groups instanceof PropertyGroup)
+            {
+            }
+            else
+            {
+                if (is_numeric($group))
+                    $group = PropertyGroup::find(['model_type_id'=>$this->model_type_id, 'property_id'=>$group])->with('activeProperties')->one();
+                else
+                    $group = PropertyGroup::find(['model_type_id'=>$this->model_type_id, 'slug'=>$group])->with('activeProperties')->one();
+            }
+
+            if ($group)
+                $this->_groups[$group['group_id']] = $group;
+        }
+
+
+    }
+
+
 }

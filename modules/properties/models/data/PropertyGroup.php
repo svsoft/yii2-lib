@@ -14,8 +14,10 @@ use yii\behaviors\SluggableBehavior;
  * @property string $name
  * @property string $slug
  * @property int $model_type_id
+ * @property int $require
  *
  * @property Property[] $properties
+ * @property Property[] $activeProperties
  * @property PropertyModelType $modelType
  */
 class PropertyGroup extends \yii\db\ActiveRecord
@@ -39,6 +41,7 @@ class PropertyGroup extends \yii\db\ActiveRecord
         return [
             [['model_type_id'], 'integer'],
             [['name', 'slug'], 'string', 'max' => 255],
+            ['require','boolean'],
             [['model_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PropertyModelType::className(), 'targetAttribute' => ['model_type_id' => 'model_type_id']],
         ];
     }
@@ -61,10 +64,11 @@ class PropertyGroup extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'group_id' => 'Group ID',
-            'name' => 'Name',
-            'slug' => 'Slug',
-            'model_type_id' => 'Model Type ID',
+            'group_id' => 'Ид',
+            'name' => 'Название',
+            'slug' => 'Код',
+            'model_type_id' => 'Тип модели',
+            'require' => 'Обязательное',
         ];
     }
 
@@ -84,6 +88,14 @@ class PropertyGroup extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getActiveProperties()
+    {
+        return $this->getProperties()->andWhere(['active'=>1])->indexBy('property_id');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getModelType()
     {
         return $this->hasOne(PropertyModelType::className(), ['model_type_id' => 'model_type_id']);
@@ -93,6 +105,24 @@ class PropertyGroup extends \yii\db\ActiveRecord
     public function setProperties($properties)
     {
         $this->_properties = $properties;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if ($this->require && $this->require != $changedAttributes['require'])
+        {
+            /**
+             * @var $objects PropertyObject[]
+             */
+            $objects = PropertyObject::find()->andWhere(['model_type_id'=>$this->model_type_id])->all();
+
+            foreach($objects as $object)
+            {
+                $object->link('groups', $this);
+            }
+        }
     }
 
 }

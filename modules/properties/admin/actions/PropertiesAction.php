@@ -60,26 +60,18 @@ class PropertiesAction extends Action
         // Получаем объект связи модели и свойств
         $object = PropertyObject::findOneElseInsert($modelType->model_type_id, $id);
 
-        $properties = $modelType->properties;
-
-        $groups = $modelType->getPropertyGroups()->indexBy('group_id')->all();
-
+        $groups = $object->getGroupsWithProperties();
 
         /**
          * @var $propertyForms PropertyForm[]
          */
         $propertyForms = [];
-        $propertiesWithoutGroup = [];
-        foreach($properties as $property)
+        foreach($groups as $group)
         {
-            $propertyForm = PropertyForm::createForm($object, $property);
-
-            $propertyForms[$property->property_id] = $propertyForm;
-
-            // СОбираем войства без группы
-            if (!$property->group_id)
+            foreach($group->activeProperties as $property)
             {
-                $propertiesWithoutGroup[] = $property;
+                $propertyForm = PropertyForm::createForm($object, $property);
+                $propertyForms[$property->property_id] = $propertyForm;
             }
         }
 
@@ -101,19 +93,11 @@ class PropertiesAction extends Action
                 $this->controller->refresh();
         }
 
-        if ($propertiesWithoutGroup)
-        {
-            $groupNull = new PropertyGroup();
-            $groupNull->name = 'Общие';
-            $groupNull->setProperties($propertiesWithoutGroup);
-            array_unshift($groups, $groupNull);
-        }
-
         // $this->view = '@svs-properties/admin/views/actions/properties';
-
         return $this->controller->render($this->view, [
             'propertyForms'=>$propertyForms,
             'model' => $model,
+            'object' => $object,
             'groups' => $groups,
         ]);
     }

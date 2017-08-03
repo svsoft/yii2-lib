@@ -16,6 +16,7 @@ use yii\behaviors\SluggableBehavior;
  * @property string $class
  *
  * @property Property[] $properties
+ * @property Property[] $activeProperties
  * @property PropertyGroup[] $propertyGroups
  * @property PropertyObject[] $propertyObjects
  */
@@ -73,6 +74,15 @@ class PropertyModelType extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Property::className(), ['model_type_id' => 'model_type_id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActiveProperties()
+    {
+        return $this->getProperties()->andWhere(['active'=>1]);
+    }
+
 
     /**
      * @return \yii\db\ActiveQuery

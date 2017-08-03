@@ -2,6 +2,7 @@
 
 namespace svsoft\yii\modules\properties\behaviors;
 
+use Yii;
 use svsoft\yii\modules\properties\traits\Properties;
 use svsoft\yii\modules\properties\traits\PropertiesTrait;
 use yii\base\Event;
@@ -9,6 +10,7 @@ use yii\base\Exception;
 use yii\base\Behavior;
 use yii\base\ModelEvent;
 use yii\db\ActiveRecord;
+use yii\db\Transaction;
 
 /**
  *
@@ -35,9 +37,14 @@ class PropertiesBehavior extends Behavior
     /**
      * Название атрибуто которое будет использоваться в качестви имени модели
      *
-     * @var str
+     * @var string
      */
     public $nameAttribute;
+
+    /**
+     * @var Transaction
+     */
+    private $transaction;
 
     public function init()
     {
@@ -52,6 +59,8 @@ class PropertiesBehavior extends Behavior
         return [
             ActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
+            ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeSave',
+            ActiveRecord::EVENT_BEFORE_INSERT => 'beforeSave',
             ActiveRecord::EVENT_AFTER_VALIDATE => 'afterValidate',
             ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete'
         ];
@@ -84,19 +93,34 @@ class PropertiesBehavior extends Behavior
             $this->owner->addError('properties', 'Properties validation error');
     }
 
+    public function beforeSave()
+    {
+        $this->transaction = Yii::$app->db->beginTransaction();
+    }
+
     public function afterSave()
     {
         $propertyObject = $this->owner->getPropertyObject();
+
+        $success = true;
+
+        // Сохраняем объект
         if ($propertyObject->isNewRecord)
         {
             $propertyObject->model_id = $this->getModelId();
 
-            $propertyObject->save();
+            $success = $propertyObject->save();
         }
 
-        // Проверяем надо ли сохранять свойства
-        if ($this->savePropertiesTogether)
-            $this->owner->getPropertyObject()->saveProperties();
+        // Проверяем надо ли сохранять свойства, сохраняем если надо
+        if ($success && $this->savePropertiesTogether)
+            $success = $this->owner->getPropertyObject()->saveProperties();
+
+        // Если вск ок, коммитем транзакцию, если нет откатываем
+        if (!$success)
+            $this->transaction->rollBack();
+        elseif ($this->transaction->getIsActive())
+            $this->transaction->commit();
     }
 
     public function beforeDelete()

@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' =>
                         function(\svsoft\yii\modules\shop\models\Order $model)
                         {
-                            $products = $model->getCartItems()->with('product')->asArray()->select(['product_id'])->all();
+                            $products = $model->getLinkedCartItems()->with('product')->asArray()->select(['product_id'])->all();
                             $products = \yii\helpers\ArrayHelper::getColumn($products, 'product.name');
                             return  implode(', ', $products);
                         },

@@ -5,6 +5,7 @@ use svsoft\yii\modules\catalog\models\Product;
 use svsoft\yii\modules\properties\models\data\Property;
 use svsoft\yii\modules\properties\models\data\PropertyGroup;
 use svsoft\yii\modules\properties\models\data\PropertyModelType;
+use svsoft\yii\modules\properties\models\data\PropertyObject;
 use Yii;
 use svsoft\yii\modules\shop\models\CartItem;
 use yii\base\Component;
@@ -34,6 +35,9 @@ class PropertyHelper
      * @param $query ActiveQuery
      * @param $fieldKey
      * @param $fieldValue
+     * @param bool $nullItem
+     *
+     * @return array
      */
     private static function getModelList($query, $fieldKey, $fieldValue, $nullItem = false)
     {
@@ -64,7 +68,4 @@ class PropertyHelper
 
         return $list;
     }
-
-
-
 }

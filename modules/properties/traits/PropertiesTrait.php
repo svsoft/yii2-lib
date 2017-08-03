@@ -56,6 +56,7 @@ trait PropertiesTrait
             if(!$this->propertyObject)
             {
                 $this->propertyObject = new PropertyObject($attributes);
+                // $this->propertyObject
             }
         }
 
@@ -195,6 +196,15 @@ trait PropertiesTrait
 
         return $this->getAttribute($attr);
     }
+
+    /**
+     * @param null $groups
+     */
+    function addPropertyGroups($groups = null)
+    {
+        return $this->getPropertyObject()->addPropertyGroups($groups);
+    }
+
 
 
 

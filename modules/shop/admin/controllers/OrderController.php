@@ -71,7 +71,7 @@ class OrderController extends Controller
         $model = $this->findModel($id);
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $model->getCartItems()->with('product'),
+            'query' => $model->getLinkedCartItems()->with('product'),
         ]);
 
         $dataProvider->pagination->setPageSize(1000);

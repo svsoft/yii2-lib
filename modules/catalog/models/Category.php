@@ -127,4 +127,27 @@ class Category extends \yii\db\ActiveRecord
     {
         return $this->getProducts()->andWhere(['active'=>1]);
     }
+
+    /**
+     * Получает цепочку родительских категорий
+     *
+     * @return Category[]
+     */
+    public function getParentChain()
+    {
+        $chain = [];
+
+        if (!$this->parent_id)
+            return [];
+
+        $category = $this;
+        do
+        {
+            $category = $category->parent;
+            $chain[$category->category_id] = $category;
+        }
+        while($category->parent_id);
+
+        return array_reverse($chain);
+    }
 }

@@ -40,14 +40,22 @@ class CategoryController extends Controller
      * Lists all Category models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($parent_id = null)
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Category::find(),
         ]);
 
+        $dataProvider->query->andWhere(['parent_id'=>$parent_id]);
+
+        $parent = null;
+        if ($parent_id)
+            $parent = $this->findModel($parent_id);
+
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'parentChain' => $this->getParentChain($parent),
+            'parent' => $parent
         ]);
     }
 
@@ -149,5 +157,24 @@ class CategoryController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * Получает цепочку родительских категорий, и добавляет корневую
+     *
+     * @param $model Category
+     *
+     * @return array
+     */
+    public function getParentChain($model)
+    {
+        if ($model)
+        {
+            $root = new Category(['name'=>'Каталог']);
+            $parents = [''=>$root];
+            ArrayHelper::merge($parents, $model->getParentChain());
+        }
+
+        return $parents;
     }
 }

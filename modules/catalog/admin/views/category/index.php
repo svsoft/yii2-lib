@@ -39,6 +39,7 @@ else
                 ['class' => 'yii\grid\SerialColumn'],
 
                 'category_id',
+                'sort',
                 'name',
                 'slug',
                 [

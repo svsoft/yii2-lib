@@ -18,6 +18,8 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
 
+        <?= $form->field($model, 'sort')->textInput(['maxlength' => true]) ?>
+
         <?=\svsoft\yii\modules\main\files\widgets\UploadFormWidget::widget([
             'model' => $model->getUploadForm(),
             'form'   => $form

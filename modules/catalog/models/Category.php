@@ -19,6 +19,7 @@ use yii\behaviors\TimestampBehavior;
  * @property string $slug
  * @property string $images
  * @property integer $active
+ * @property integer $sort
  *
  * @property Category $parent
  * @property Category[] $categories
@@ -43,7 +44,7 @@ class Category extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['parent_id', 'active'], 'integer'],
+            [['parent_id', 'active','sort'], 'integer'],
             [['name'], 'required'],
             [['images'], 'string'],
             [['name', 'slug'], 'string', 'max' => 255],

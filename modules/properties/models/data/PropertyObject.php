@@ -327,6 +327,9 @@ class PropertyObject extends \yii\db\ActiveRecord
             }
         }
 
+        foreach($this->linkedGroups as $group)
+            $this->unlink('linkedGroups', $group);
+
         return true;
     }
 

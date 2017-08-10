@@ -125,6 +125,7 @@ class PropertiesBehavior extends Behavior
 
     public function beforeDelete()
     {
+
         $this->owner->getPropertyObject()->delete();
     }
 

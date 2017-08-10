@@ -2,7 +2,10 @@
 
 namespace svsoft\yii\modules\shop;
 
+use svsoft\yii\modules\catalog\models\Product;
 use svsoft\yii\modules\main\components\BaseModule;
+use yii\base\Event;
+use yii\db\ActiveRecord;
 
 /**
  * main module definition class
@@ -26,4 +29,6 @@ class ShopModule extends BaseModule
 
         // custom initialization code goes here
     }
+
+
 }

@@ -168,6 +168,7 @@ class CategoryController extends Controller
      */
     public function getParentChain($model)
     {
+        $parents = [];
         if ($model)
         {
             $root = new Category(['name'=>'Каталог']);

@@ -7,9 +7,6 @@ class m170802_225110_reorganization_groups extends Migration
 {
     public function safeUp()
     {
-        // доавляем колонку в таблицу групп свойств обязательная
-        $this->addColumn('property_group','require',$this->boolean());
-
         $properties = $this->db->createCommand('SELECT * FROM property WHERE group_id IS NULL')
             ->queryAll();
 
@@ -49,12 +46,6 @@ class m170802_225110_reorganization_groups extends Migration
                     $this->insert('property_object_group',['group_id'=>$group_id, 'object_id'=>$object_id]);
             }
         }
-
-        $this->alterColumn('property','group_id',$this->integer()->notNull());
-        $this->alterColumn('property_group','model_type_id',$this->integer()->notNull());
-        $this->alterColumn('property_object','model_type_id',$this->integer()->notNull());
-        $this->alterColumn('property_value','object_id',$this->integer()->notNull());
-        $this->alterColumn('property_value','property_id',$this->integer()->notNull());
     }
 
     public function safeDown()

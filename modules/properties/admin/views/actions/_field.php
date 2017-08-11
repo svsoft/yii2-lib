@@ -28,6 +28,9 @@ switch($propertyForm->property->type)
     case Property::TYPE_BOOLEAN:
         echo $this->render('_field_boolean', ['form' => $form, 'propertyForm' => $propertyForm]);
         break;
+    case Property::TYPE_HTML:
+        echo $this->render('_field_html', ['form' => $form, 'propertyForm' => $propertyForm]);
+        break;
 
     default;
 }

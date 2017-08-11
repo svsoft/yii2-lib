@@ -8,6 +8,7 @@ use svsoft\yii\modules\properties\components\types\StringValue;
 use svsoft\yii\modules\properties\components\types\BooleanValue;
 use svsoft\yii\modules\properties\models\forms\types\PropertyBoolean;
 use svsoft\yii\modules\properties\models\forms\types\PropertyFloat;
+use svsoft\yii\modules\properties\models\forms\types\PropertyHtml;
 use svsoft\yii\modules\properties\models\forms\types\PropertyInteger;
 use svsoft\yii\modules\properties\models\forms\types\PropertyString;
 use Yii;
@@ -42,6 +43,7 @@ class Property extends \yii\db\ActiveRecord
     const TYPE_TEXT      = 4;
     const TYPE_TIMESTAMP = 5;
     const TYPE_BOOLEAN   = 6;
+    const TYPE_HTML      = 7;
 
     static public $types = [];
 
@@ -60,15 +62,6 @@ class Property extends \yii\db\ActiveRecord
      */
     static public function columnNameByType($type)
     {
-        static $columnNames = [
-            Property::TYPE_STRING       => 'string_value',
-            Property::TYPE_INTEGER      => 'int_value',
-            Property::TYPE_FLOAT        => 'float_value',
-            Property::TYPE_TEXT         => 'text_value',
-            Property::TYPE_TIMESTAMP    => 'timestamp_value',
-            Property::TYPE_BOOLEAN      => 'int_value',
-        ];
-
         $type = self::getTypes($type);
 
         $columnName = $type['columnName'];
@@ -122,6 +115,12 @@ class Property extends \yii\db\ActiveRecord
                     'name'=>'Да/Нет',
                     'columnName'=> 'int_value',
                     'typeClass'=> PropertyBoolean::className(),
+                ],
+                self::TYPE_HTML => [
+                    //'valueClass'=> StringValue::className(),
+                    'name'=>'Html',
+                    'columnName'=> 'text_value',
+                    'typeClass'=> PropertyHtml::className(),
                 ],
             ];
 

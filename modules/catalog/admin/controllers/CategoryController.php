@@ -6,6 +6,7 @@ use svsoft\yii\modules\main\files\FileAttributeHelper;
 use svsoft\yii\modules\main\files\models\UploadForm;
 use svsoft\yii\modules\catalog\CatalogModule;
 use svsoft\yii\modules\catalog\components\CatalogHelper;
+use svsoft\yii\modules\properties\admin\actions\PropertiesAction;
 use Yii;
 use svsoft\yii\modules\catalog\models\Category;
 use yii\data\ActiveDataProvider;
@@ -32,6 +33,21 @@ class CategoryController extends Controller
                 'actions' => [
                     'delete' => ['POST'],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        return [
+            'properties' => [
+                'class' => PropertiesAction::className(),
+                //                'view'=> $this->module->basePath . '/views/product/properties.php',
+                'view' => '@svs-catalog/admin/views/category/properties',
+                'modelClass' => Category::className(),
             ],
         ];
     }

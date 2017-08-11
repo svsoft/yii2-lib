@@ -5,6 +5,8 @@ namespace svsoft\yii\modules\catalog\models;
 use svsoft\yii\modules\catalog\query\CategoryQuery;
 use svsoft\yii\modules\main\files\FileAttributeBehavior;
 use svsoft\yii\modules\main\files\FileAttributeTrait;
+use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
+use svsoft\yii\modules\properties\traits\PropertiesTrait;
 use svsoft\yii\traits\SluggableTrait;
 use Yii;
 use yii\behaviors\SluggableBehavior;
@@ -30,6 +32,8 @@ class Category extends \yii\db\ActiveRecord
 {
     use FileAttributeTrait;
     use SluggableTrait;
+    use PropertiesTrait;
+
     /**
      * @inheritdoc
      */
@@ -69,7 +73,12 @@ class Category extends \yii\db\ActiveRecord
             [
                 'class'=>FileAttributeBehavior::className(),
                 'attributes' => ['images'],
-            ]
+            ],
+            [
+                'class' => PropertiesBehavior::className(),
+                'getId' => function($model) { return $model->category_id;  },
+                'nameAttribute' => 'name',
+            ],
         ];
     }
 

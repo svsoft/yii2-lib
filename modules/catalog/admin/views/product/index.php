@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = 'Товары';
                 ['class' => 'yii\grid\SerialColumn'],
 
                 'product_id',
-                'category_id',
+                //'category_id',
                 'name',
                 'slug',
                 'description:ntext',
@@ -48,7 +48,12 @@ $this->params['breadcrumbs'][] = 'Товары';
                 // 'count',
                 // 'measure',
 
-                ['class' => 'yii\grid\ActionColumn'],
+
+                [
+                    'class'          => 'yii\grid\ActionColumn',
+                    'template'       => '{view}{update}{delete}',
+                    'buttonOptions' => ['class'=>'btn btn-info btn-xs button'],
+                ],
             ],
         ]); ?>
     </div>

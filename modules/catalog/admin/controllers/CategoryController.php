@@ -71,7 +71,8 @@ class CategoryController extends Controller
         return $this->render('index', [
             'dataProvider' => $dataProvider,
             'parentChain' => $this->getParentChain($parent),
-            'parent' => $parent
+            'parent' => $parent,
+            'parent_id'=>$parent_id
         ]);
     }
 
@@ -92,10 +93,12 @@ class CategoryController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($parent_id = null)
     {
         $model = new Category();
         $categories = CatalogHelper::getCategoryList(false);
+
+        $model->parent_id = $parent_id;
 
         if ($model->load(Yii::$app->request->post()))
         {

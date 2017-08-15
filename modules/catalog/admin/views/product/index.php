@@ -6,13 +6,25 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $searchModel svsoft\yii\modules\catalog\models\ProductSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $category \svsoft\yii\modules\catalog\models\Category */
 
-$this->title = 'Products';
-$this->params['breadcrumbs'][] = $this->title;
+
+if ($category)
+{
+    foreach($category->getChain() as $parent)
+    {
+        $this->params['breadcrumbs'][] = ['label' => $parent->name, 'url' => ['category/index', 'parent_id'=>$parent->category_id]];
+        $this->title .= $parent->name . '/';
+    }
+}
+
+$this->title .= 'Товары';
+$this->params['breadcrumbs'][] = 'Товары';
+
 ?>
 <div class="product-index box box-primary">
     <div class="box-header with-border">
-        <?= Html::a('Create Product', ['create'], ['class' => 'btn btn-success btn-flat']) ?>
+        <?= Html::a('Добавить товар', ['create','category_id'=>$category_id], ['class' => 'btn btn-success btn-flat']) ?>
     </div>
     <div class="box-body table-responsive no-padding">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

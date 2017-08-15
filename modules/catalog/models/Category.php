@@ -195,4 +195,13 @@ class Category extends \yii\db\ActiveRecord
 
         return array_reverse($chain);
     }
+
+    public function getChain()
+    {
+        $chain = $this->getParentChain();
+
+        $chain[$this->category_id] = $this;
+
+        return $chain;
+    }
 }

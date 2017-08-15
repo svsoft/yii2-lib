@@ -3,6 +3,7 @@
 namespace svsoft\yii\modules\catalog\admin\controllers;
 
 use svsoft\yii\modules\catalog\components\CatalogHelper;
+use svsoft\yii\modules\catalog\models\Category;
 use svsoft\yii\modules\properties\admin\actions\PropertiesAction;
 use svsoft\yii\modules\properties\models\data\Property;
 use svsoft\yii\modules\properties\models\forms\PropertyValueForm;
@@ -55,17 +56,23 @@ class ProductController extends Controller
      * Lists all Product models.
      * @return mixed
      */
-    public function actionIndex($category_id = false)
+    public function actionIndex($category_id = null)
     {
         $searchModel = new ProductSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $category = null;
         if ($category_id !== false)
-            $dataProvider->query->andWhere(['category_id'=>$category_id]);
+        {
+            $dataProvider->query->andWhere(['category_id' => $category_id]);
+            $category = $this->findCategory($category_id);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'category_id' => $category_id,
+            'category' => $category,
         ]);
     }
 
@@ -86,11 +93,13 @@ class ProductController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($category_id = null)
     {
         $model = new Product();
 
         $categories = CatalogHelper::getCategoryList(false);
+
+        $model->category_id = $category_id;
 
         if ($model->load(Yii::$app->request->post()))
         {
@@ -159,6 +168,15 @@ class ProductController extends Controller
     protected function findModel($id)
     {
         if (($model = Product::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    protected function findCategory($id)
+    {
+        if (($model = Category::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

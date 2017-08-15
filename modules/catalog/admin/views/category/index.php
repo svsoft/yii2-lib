@@ -8,6 +8,7 @@ use svsoft\yii\modules\catalog\models\Category;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $parentChain Category[] */
 /* @var $parent Category */
+/* @var $parent_id int */
 
 foreach($parentChain as $category)
 {
@@ -29,7 +30,8 @@ else
 ?>
 <div class="catalog-category-index box box-primary">
     <div class="box-header with-border">
-        <?= Html::a('Create Catalog Category', ['create'], ['class' => 'btn btn-success btn-flat']) ?>
+        <?= Html::a('Добавить категорию', ['create', 'parent_id'=>$parent_id], ['class' => 'btn btn-success btn-flat']) ?>
+        <?= Html::a('Список товаров', ['product/index', 'category_id'=>$parent_id], ['class' => 'btn btn-info btn-flat']) ?>
     </div>
     <div class="box-body table-responsive no-padding">
         <?= GridView::widget([

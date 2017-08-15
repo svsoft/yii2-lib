@@ -19,6 +19,7 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $parent_id
  * @property string $name
  * @property string $slug
+ * @property string $slug_chain
  * @property string $images
  * @property integer $active
  * @property integer $sort
@@ -95,6 +96,40 @@ class Category extends \yii\db\ActiveRecord
             'images' => 'Images',
             'active' => 'Active',
         ];
+    }
+
+    public function beforeValidate()
+    {
+        if (!parent::beforeValidate())
+            return false;
+
+        $this->fillSlugChain();
+
+        return true;
+    }
+
+    public function afterValidate()
+    {
+        parent::afterValidate();
+
+        // Добавляем ошибки от slug_chain в slug
+        if ($this->getFirstError('slug_chain'))
+            $this->addError('slug', $this->getFirstError('slug_chain'));
+    }
+
+    public function fillSlugChain()
+    {
+        $chain = $this->getParentChain();
+
+        $slug_chain = '';
+        foreach($chain as $category)
+        {
+            $slug_chain .= $category->slug . '/';
+        }
+
+        $slug_chain .= $this->slug;
+
+        $this->slug_chain = $slug_chain;
     }
 
     /**

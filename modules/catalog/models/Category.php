@@ -19,7 +19,8 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $parent_id
  * @property string $name
  * @property string $slug
- * @property string $slug_chain
+ * @property string $slug_chain - цепочка кодов
+ * @property integer $slug_lock - флаг блокировки изменения slug
  * @property string $images
  * @property integer $active
  * @property integer $sort
@@ -49,7 +50,8 @@ class Category extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['parent_id', 'active','sort'], 'integer'],
+            [['parent_id','sort'], 'integer'],
+            [['active','slug_lock'], 'boolean'],
             [['name'], 'required'],
             [['images'], 'string'],
             [['name', 'slug'], 'string', 'max' => 255],
@@ -104,6 +106,12 @@ class Category extends \yii\db\ActiveRecord
             return false;
 
         $this->fillSlugChain();
+
+        // блокируем изменение slug
+        if (!$this->isNewRecord && $this->slug_lock)
+        {
+            $this->slug = $this->getOldAttribute('slug');
+        }
 
         return true;
     }

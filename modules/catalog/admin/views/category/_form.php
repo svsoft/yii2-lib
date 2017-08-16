@@ -1,7 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use kartik\widgets\ActiveForm;
+
 
 /* @var $this yii\web\View */
 /* @var $model svsoft\yii\modules\catalog\models\Category */
@@ -16,7 +17,9 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'slug', [
+            'addon' => ['append' => ['content'=>Html::activeCheckbox($model,'slug_lock',['label'=>false])]]
+        ])->textInput(['maxlength' => true,'disabled'=>$model->slug_lock ? true : false]) ?>
 
         <?= $form->field($model, 'sort')->textInput(['maxlength' => true]) ?>
 
@@ -33,3 +36,20 @@ use yii\widgets\ActiveForm;
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+
+<?php
+$js = <<< JS
+
+    // Биндим обработчики на клик кнопки добавление в корзину в модальном окне
+    $('#category-slug_lock').on('change', function (e) {
+        var slug_lock = $(this).is(':checked');
+        $('#category-slug').attr('disabled',slug_lock);     
+    });
+JS;
+
+$this->registerJs($js);
+?>
+
+<?=$this->render('@views/particles/_modal-product');?>
+
+

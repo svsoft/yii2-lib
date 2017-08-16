@@ -91,12 +91,13 @@ class Category extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'category_id' => 'Category ID',
-            'parent_id' => 'Parent ID',
-            'name' => 'Name',
-            'slug' => 'Slug',
-            'images' => 'Images',
-            'active' => 'Active',
+            'category_id' => 'ИД',
+            'parent_id' => 'Родительская категория',
+            'name' => 'Название',
+            'slug' => 'Код',
+            'images' => 'Картинка',
+            'active' => 'Активность',
+            'sort' => 'Сортировка'
         ];
     }
 
@@ -107,7 +108,7 @@ class Category extends \yii\db\ActiveRecord
 
         $this->fillSlugChain();
 
-        // блокируем изменение slug
+        // блокируем изменение slug если установлен slug_lock
         if (!$this->isNewRecord && $this->slug_lock)
         {
             $this->slug = $this->getOldAttribute('slug');

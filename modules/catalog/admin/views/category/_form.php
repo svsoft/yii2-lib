@@ -21,7 +21,7 @@ use kartik\widgets\ActiveForm;
             'addon' => ['append' => ['content'=>Html::activeCheckbox($model,'slug_lock',['label'=>false])]]
         ])->textInput(['maxlength' => true,'disabled'=>$model->slug_lock ? true : false]) ?>
 
-        <?= $form->field($model, 'sort')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'sort')->textInput() ?>
 
         <?=\svsoft\yii\modules\main\files\widgets\UploadFormWidget::widget([
             'model' => $model->getUploadForm(),

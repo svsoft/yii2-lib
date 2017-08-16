@@ -27,6 +27,8 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'active')->checkbox() ?>
 
+        <?= $form->field($model, 'sort')->textInput() ?>
+
         <?= $form->field($model, 'price')->textInput() ?>
 
         <?= $form->field($model, 'count')->textInput() ?>

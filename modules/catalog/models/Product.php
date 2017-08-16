@@ -26,6 +26,7 @@ use yii\behaviors\TimestampBehavior;
  * @property double $price
  * @property double $count
  * @property string $measure
+ * @property integer $sort
  *
  * @property Category $category
  */
@@ -48,7 +49,8 @@ class Product extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['category_id', 'active', 'created', 'updated'], 'integer'],
+            [['category_id', 'created', 'updated','sort'], 'integer'],
+            [['active'], 'boolean'],
             [['name'], 'required'],
             [['description', 'images'], 'string'],
             [['price', 'count'], 'number'],
@@ -101,6 +103,7 @@ class Product extends \yii\db\ActiveRecord
             'price' => 'Цена',
             'count' => 'Количество',
             'measure' => 'Мера',
+            'sort' => 'Сортировка'
         ];
     }
 

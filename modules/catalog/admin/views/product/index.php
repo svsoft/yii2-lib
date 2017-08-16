@@ -40,6 +40,7 @@ $this->params['breadcrumbs'][] = 'Товары';
                 'name',
                 'slug',
                 'description:ntext',
+                'sort',
                 // 'images:ntext',
                 // 'active',
                 // 'created',

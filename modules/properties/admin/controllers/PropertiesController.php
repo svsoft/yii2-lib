@@ -55,7 +55,7 @@ class PropertiesController extends Controller
         if (!$group)
             throw new NotFoundHttpException('The requested page does not exist.');
 
-        $object->unlink('linkedGroups', $group);
+        $object->unlink('linkedGroups', $group, true);
 
         return $this->redirect(Yii::$app->request->referrer);
     }

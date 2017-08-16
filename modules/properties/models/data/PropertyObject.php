@@ -328,7 +328,7 @@ class PropertyObject extends \yii\db\ActiveRecord
         }
 
         foreach($this->linkedGroups as $group)
-            $this->unlink('linkedGroups', $group);
+            $this->unlink('linkedGroups', $group, true);
 
         return true;
     }
@@ -385,8 +385,6 @@ class PropertyObject extends \yii\db\ActiveRecord
             if ($group)
                 $this->_groups[$group['group_id']] = $group;
         }
-
-
     }
 
 

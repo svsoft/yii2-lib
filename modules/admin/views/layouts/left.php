@@ -26,7 +26,7 @@
         </form>
         <!-- /.search form -->
 
-        <?= svsoft\yii\modules\main\admin\widgets\Menu::widget(
+        <?= svsoft\yii\modules\admin\widgets\Menu::widget(
             [
                 'options' => ['class' => 'sidebar-menu'],
                 'items' => [

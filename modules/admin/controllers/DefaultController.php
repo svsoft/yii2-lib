@@ -1,6 +1,6 @@
 <?php
 
-namespace svsoft\yii\modules\main\admin\controllers;
+namespace svsoft\yii\modules\admin\controllers;
 
 use yii\web\Controller;
 

@@ -153,7 +153,13 @@ class ProductController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        if (!$model->delete())
+        {
+            Yii::$app->session->setFlash('error',$model->getFirstError('beforeDelete'));
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+
 
         return $this->redirect(['index']);
     }

@@ -2,45 +2,36 @@
 
 namespace svsoft\yii\modules\main;
 
-use svsoft\yii\modules\main\admin\AdminModule;
+use svsoft\yii\modules\admin\AdminModule;
+use svsoft\yii\modules\catalog\models\Product;
+use svsoft\yii\modules\shop\components\Cart;
+use svsoft\yii\modules\shop\models\CartItem;
 use Yii;
 use svsoft\yii\modules\main\components\BaseModule;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
+use yii\base\Event;
 use yii\base\Model;
+use yii\base\ModelEvent;
 use yii\base\Module;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
  * main module definition class
+ *
+ * @property Cart $cart
+ *
  */
-class MainModule extends \yii\base\Module implements BootstrapInterface
+
+/**
+ * Class MainModule
+ * @package svsoft\yii\modules\main
+ *
+ * @property Cart $cart
+ */
+class MainModule extends Module implements BootstrapInterface
 {
-    /**
-     * Список модулей у которых будет админка
-     *
-     * @var array
-     */
-    public $adminModules = [];
-
-    /**
-     * MainModule constructor.
-     *
-     * @param string $id
-     * @param null|\yii\base\Module $parent
-     * @param array $config
-     */
-    public function __construct($id, $parent, $config = [])
-    {
-        $config['modules']['admin'] = [
-            'class' => __NAMESPACE__ . '\admin\AdminModule',
-            'controllerNamespace'=>__NAMESPACE__ . '\admin\controllers',
-            'viewPath'=>$this->basePath . '/admin/views'
-        ];
-
-        parent::__construct($id, $parent, $config);
-    }
-
     /**
      * @inheritdoc
      */
@@ -62,6 +53,7 @@ class MainModule extends \yii\base\Module implements BootstrapInterface
         Yii::setAlias('@views', '@app/views');
 
         Yii::setAlias('@svs-lib', '@vendor/svsoft/yii2-lib');
+        Yii::setAlias('@svs-admin', '@svs-lib/modules/admin');
         Yii::setAlias('@svs-main', '@svs-lib/modules/main');
         Yii::setAlias('@svs-properties', '@svs-lib/modules/properties');
         Yii::setAlias('@svs-catalog', '@svs-lib/modules/catalog');
@@ -75,16 +67,17 @@ class MainModule extends \yii\base\Module implements BootstrapInterface
         Yii::setAlias('@web-files', '@web-upload/files');
 
         // Для консольного приложения добавляем пути миграция
+
         if ($app instanceof \yii\console\Application)
         {
             $migrateConfig = &Yii::$app->controllerMap['migrate'];
             if (empty($migrateConfig['class']))
                 $migrateConfig['class'] = 'yii\console\controllers\MigrateController';
 
-            // Список модулей для миграций
-            foreach($this->adminModules as $moduleId)
+            // Список модулей
+            foreach($this->modules as $id=>$module)
             {
-                $module = ArrayHelper::getValue(Yii::$app->modules, $moduleId);
+                // $module = ArrayHelper::getValue(Yii::$app->modules, $id);
                 if ($module)
                 {
                     $class = $module['class'];
@@ -93,18 +86,24 @@ class MainModule extends \yii\base\Module implements BootstrapInterface
                     $path = dirname($reflectionClass->getFileName());
                     $namespace = $reflectionClass->getNamespaceName();
 
-                    if (file_exists($path. '/migrations'))
+                    $migrationsDirPath = $path. '/migrations';
+                    if (file_exists($migrationsDirPath))
                         $migrateConfig['migrationNamespaces'][] =  $namespace . '\migrations';
                 }
             }
         }
 
-        // Добавляем кодогенератор
-        $giiCrudConfig = &$app->getModule('gii')->generators['crud'];
+        if ($this->modules['catalog'] && $this->modules['shop'])
+        {
+            ModelEvent::on(Product::className(), ActiveRecord::EVENT_BEFORE_DELETE, function (ModelEvent $event){
 
-        if (empty($giiCrudConfig['class']))
-            $giiCrudConfig['class'] = 'yii\gii\generators\crud\Generator';
-
-        $giiCrudConfig['templates']['adminlte'] = '@svs-main/gii/templates/crud/simple';
+                $cartItems = CartItem::findOne(['product_id'=>$event->sender->product_id]);
+                if ($cartItems)
+                {
+                    $event->sender->addError('beforeDelete', 'Нельзя удалить товар если если он есть в корзине');
+                    $event->isValid = false;
+                }
+            });
+        }
     }
 }

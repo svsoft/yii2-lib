@@ -21,20 +21,6 @@ class BaseModule extends \yii\base\Module
             $config = ArrayHelper::merge($config, require ($configFilePath));
         }
 
-        $class = get_class($this);
-        $strRev = strrev($class);
-        $namespace = strrev(substr($strRev, strpos($strRev, '\\', 0) + 1));
-
-        $config = ArrayHelper::merge($config, [
-            'modules'=>[
-                'admin'=>[
-                    'class' => $namespace . '\admin\AdminModule',
-                    'controllerNamespace' => $namespace . '\admin\controllers',
-                    'viewPath' => $this->basePath . '/admin/views',
-                ]
-            ]
-        ]);
-
         parent::__construct($id, $parent, $config);
     }
 

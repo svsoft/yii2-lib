@@ -17,7 +17,7 @@ class DevController extends Controller
     public function actionIndex()
     {
 
-        $this->layout = '@svs-main/admin/views/layouts/main';
+        $this->layout = '@svs-admin/views/layouts/main';
 
 
 

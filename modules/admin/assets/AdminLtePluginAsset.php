@@ -1,6 +1,6 @@
 <?php
 
-namespace svsoft\yii\modules\main\admin\assets;
+namespace svsoft\yii\modules\admin\assets;
 
 use yii\web\AssetBundle;
 

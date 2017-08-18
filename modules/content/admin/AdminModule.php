@@ -2,7 +2,7 @@
 
 namespace svsoft\yii\modules\content\admin;
 
-use svsoft\yii\modules\main\components\BaseAdminModule;
+use svsoft\yii\modules\admin\components\BaseAdminModule;
 
 /**
  * admin module definition class

@@ -2,7 +2,7 @@
 
 namespace svsoft\yii\modules\properties\admin;
 
-use svsoft\yii\modules\main\components\BaseAdminModule;
+use svsoft\yii\modules\admin\components\BaseAdminModule;
 use yii\filters\AccessControl;
 
 /**

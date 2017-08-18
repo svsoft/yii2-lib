@@ -5,13 +5,11 @@
  *  @var string $id
  */
 
-$moduleRoute = "/{$parent->id}/{$id}/";
-
 return [
     'adminMenu'=>[
         ['label' => 'Контент', 'icon' => 'file-text-o', 'url' => '#', 'items'=>[
-            ['label' => 'Документы', 'icon' => 'folder-o', 'url' => [$moduleRoute . 'document/documents']],
-            ['label' => 'Блоки', 'icon' => 'folder-o', 'url' => [$moduleRoute . 'content-block/index']],
+            ['label' => 'Документы', 'icon' => 'folder-o', 'url' => ['/admin/content/document/documents']],
+            ['label' => 'Блоки', 'icon' => 'folder-o', 'url' => ['/admin/content/content-block/index']],
         ]],
     ]
 ];

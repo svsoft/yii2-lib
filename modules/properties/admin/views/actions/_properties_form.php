@@ -38,11 +38,11 @@ $groups = $object->getGroupsWithProperties();
                         <?foreach($allGroups as $groupId=>$group):?>
                             <li role="presentation">
                                 <? if (empty($groups[$groupId])):?>
-                                    <a role="menuitem" tabindex="-1" href="<?=Url::to(['/properties/admin/properties/link-group', 'object_id'=>$object->object_id, 'group_id'=>$groupId])?>" data-confirm="Не сохранненные данные будут потеряны, продолжить?">
+                                    <a role="menuitem" tabindex="-1" href="<?=Url::to(['/admin/properties/properties/link-group', 'object_id'=>$object->object_id, 'group_id'=>$groupId])?>" data-confirm="Не сохранненные данные будут потеряны, продолжить?">
                                         <i class="fa fa-plus color-add"></i><?=$group->name?>
                                     </a>
                                 <? else:?>
-                                    <a role="menuitem" tabindex="-1" href="<?=Url::to(['/properties/admin/properties/unlink-group', 'object_id'=>$object->object_id, 'group_id'=>$groupId])?>" data-confirm="Не сохранненные данные будут потеряны, продолжить?">
+                                    <a role="menuitem" tabindex="-1" href="<?=Url::to(['/admin/properties/properties/unlink-group', 'object_id'=>$object->object_id, 'group_id'=>$groupId])?>" data-confirm="Не сохранненные данные будут потеряны, продолжить?">
                                         <?if (!$group->require):?><i class="fa fa-close color-delete"></i><?endif;?><?=$group->name?>
                                     </a>
                                 <? endif;?>

@@ -1,0 +1,25 @@
+
+td.format-currency { text-align: right; white-space: nowrap; vertical-align: middle !important; }
+th.format-currency { text-align: right; }
+
+td.format-date { white-space: nowrap; vertical-align: middle !important; text-align: center;  }
+th.format-date { text-align: center; vertical-align: middle }
+
+td.format-text { text-align: left; vertical-align: middle !important;  }
+th.format-text { text-align: left; vertical-align: middle }
+
+td.format-fixed-text { text-align: left; vertical-align: middle !important; }
+th.format-fixed-text { text-align: left; vertical-align: middle !important; }
+
+td.format-action { text-align: center; vertical-align: middle !important; white-space: nowrap; width: 1%; }
+th.format-action { text-align: center; }
+
+td.format-status { text-align: center; vertical-align: middle !important; width: 1%; }
+th.format-status { text-align: center; vertical-align: middle; }
+
+td.format-number { text-align: right; white-space: nowrap; vertical-align: middle !important; width: 1%; }
+th.format-number { text-align: right; }
+
+td.format-images { text-align: center; vertical-align: middle !important; }
+th.format-images { text-align: center; vertical-align: middle; }
+

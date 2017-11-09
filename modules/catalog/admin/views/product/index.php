@@ -6,8 +6,7 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $searchModel svsoft\yii\modules\catalog\models\ProductSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-/* @var $category \svsoft\yii\modules\catalog\models\Category */
-
+/* @var $category_id int */
 
 if ($category)
 {
@@ -33,14 +32,39 @@ $this->params['breadcrumbs'][] = 'Товары';
             'filterModel' => $searchModel,
             'layout' => "{items}\n{summary}\n{pager}",
             'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-
-                'product_id',
-                //'category_id',
-                'name',
-                'slug',
-                'description:ntext',
-                'sort',
+                [
+                    'class' => 'yii\grid\SerialColumn',
+                    'contentOptions' => ['class'=>'format-number'],
+                    'headerOptions' => ['class'=>'format-number'],
+                ],
+                [
+                    'attribute' => 'product_id',
+                    'contentOptions' => ['class'=>'format-number'],
+                    'headerOptions' => ['class'=>'format-number'],
+                ],
+                [
+                    'attribute' => 'name',
+                    'format'=>'ntext',
+                    'contentOptions' => ['class'=>'format-text'],
+                    'headerOptions' => ['class'=>'format-text'],
+                ],
+                [
+                    'attribute' => 'slug',
+                    'format'=>'ntext',
+                    'contentOptions' => ['class'=>'format-text'],
+                    'headerOptions' => ['class'=>'format-text'],
+                ],
+                [
+                    'attribute' => 'description',
+                    'format'=>'ntext',
+                    'contentOptions' => ['class'=>'format-text'],
+                    'headerOptions' => ['class'=>'format-text'],
+                ],
+                [
+                    'attribute' => 'sort',
+                    'contentOptions' => ['class'=>'format-number'],
+                    'headerOptions' => ['class'=>'format-number'],
+                ],
                 // 'images:ntext',
                 // 'active',
                 // 'created',
@@ -53,6 +77,8 @@ $this->params['breadcrumbs'][] = 'Товары';
                 [
                     'class'          => 'yii\grid\ActionColumn',
                     'template'       => '{view}{update}{delete}',
+                    'contentOptions' => ['class'=>'format-action'],
+                    'headerOptions' => ['class'=>'format-action'],
                     'buttonOptions' => ['class'=>'btn btn-info btn-xs button'],
                 ],
             ],

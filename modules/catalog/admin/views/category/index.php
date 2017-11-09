@@ -38,22 +38,48 @@ else
             'dataProvider' => $dataProvider,
             'layout' => "{items}\n{summary}\n{pager}",
             'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'class' => 'yii\grid\SerialColumn',
+                    'contentOptions' => ['class'=>'format-number'],
+                    'headerOptions' => ['class'=>'format-number'],
+                ],
+                [
+                    'attribute' => 'category_id',
+                    'contentOptions' => ['class'=>'format-number'],
+                    'headerOptions' => ['class'=>'format-number'],
+                ],
 
-                'category_id',
-                'sort',
-                'name',
-                'slug',
+                [
+                    'attribute' => 'name',
+                    'format'=>'ntext',
+                    'contentOptions' => ['class'=>'format-text'],
+                    'headerOptions' => ['class'=>'format-text'],
+                ],
+                [
+                    'attribute' => 'slug',
+                    'format'=>'ntext',
+                    'contentOptions' => ['class'=>'format-text'],
+                    'headerOptions' => ['class'=>'format-text'],
+                ],
                 [
                     'attribute' => 'images',
                     'format'=>'html',
+                    'contentOptions' => ['class'=>'format-images'],
+                    'headerOptions' => ['class'=>'format-images'],
                     'value'=>
                         function(Category $model) {
                             return Html::img(Yii::$app->image->crop( $model->getFirstFileSrc(),'admin-small'));
                         }
                 ],
-                // 'active',
-
+                [
+                    'attribute' => 'sort',
+                    'contentOptions' => ['class'=>'format-number'],
+                    'headerOptions' => ['class'=>'format-number'],
+                ],
+                [
+                    'class'=>\svsoft\yii\modules\catalog\admin\components\StatusColumn::className(),
+                    'attribute' => 'active',
+                ],
                 [
                     'class'          => 'yii\grid\ActionColumn',
                     'template'       => '{children}{products}<span class="button-separator"></span>{view}{update}{delete}',
@@ -62,8 +88,10 @@ else
 //                        'products' => function(Category $model){ return $model->products; },
                     ],
                     'buttonOptions' => ['class'=>'btn btn-info btn-xs button'],
+                    'contentOptions' => ['class'=>'format-action'],
+                    'headerOptions' => ['class'=>'format-action'],
                     'buttons'        => [
-                        'children' => function ($url, $model, $key)
+                        'children' => function ($url, $model)
                         {
                             $disabled = $model->categories ? '' : 'disabled';
 

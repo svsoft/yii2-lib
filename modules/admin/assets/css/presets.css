@@ -23,3 +23,7 @@ th.format-number { text-align: right; }
 td.format-images { text-align: center; vertical-align: middle !important; }
 th.format-images { text-align: center; vertical-align: middle; }
 
+.btn-sm-group-2 { min-width: 67px}
+.btn-sm-group-3 { min-width: 98px}
+.btn-sm-group-4 { min-width: 131px}
+.btn-sm-group-5 { width: 164px}

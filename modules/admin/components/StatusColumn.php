@@ -1,6 +1,6 @@
 <?php
 
-namespace svsoft\yii\modules\catalog\admin\components;
+namespace svsoft\yii\modules\admin\components;
 
 use yii\grid\DataColumn;
 use yii\helpers\Html;

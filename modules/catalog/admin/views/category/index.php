@@ -77,32 +77,33 @@ else
                     'headerOptions' => ['class'=>'format-number'],
                 ],
                 [
-                    'class'=>\svsoft\yii\modules\catalog\admin\components\StatusColumn::className(),
+                    'class'=>\svsoft\yii\modules\admin\components\StatusColumn::className(),
                     'attribute' => 'active',
                 ],
                 [
-                    'class'          => 'yii\grid\ActionColumn',
-                    'template'       => '{children}{products}<span class="button-separator"></span>{view}{update}{delete}',
-                    'visibleButtons' => [
-//                        'children' => function(Category $model){ return $model->categories; },
-//                        'products' => function(Category $model){ return $model->products; },
-                    ],
-                    'buttonOptions' => ['class'=>'btn btn-info btn-xs button'],
+                    'class'          => \svsoft\yii\modules\admin\components\ActionColumn::className(),
+                    'template'       => '<div class="btn-group btn-sm-group-2">{children}{products}</div><div class="btn-group btn-sm-group-2">{update}{delete}</div>',
+                    'buttonOptions' => ['class'=>'btn btn-info btn-sm'],
                     'contentOptions' => ['class'=>'format-action'],
                     'headerOptions' => ['class'=>'format-action'],
                     'buttons'        => [
-                        'children' => function ($url, $model)
-                        {
-                            $disabled = $model->categories ? '' : 'disabled';
+                        'children' => [
 
-                            return Html::a(Html::tag('i','',['class'=>'fa fa-bars']), ['category/index', 'parent_id'=>$model->category_id], ['class' => 'btn btn-info btn-xs button '.$disabled]);
-                        },
-                        'products' => function ($url, Category $model, $key)
-                        {
-                            $disabled = $model->products ? '' : 'disabled';
-
-                            return Html::a(Html::tag('i','',['class'=>'fa fa-shopping-cart']), ['product/index?category_id='.$model->category_id], ['class' => 'btn btn-info btn-xs button '. $disabled]);
-                        },
+                            'url'=> function(Category $model) { return \yii\helpers\Url::to(['category/index', 'parent_id'=>$model->category_id]); },
+                            'content'=>'<i class="fa fa-bars"></i>',
+                            'class'=>'btn btn-sm btn-default',
+                            'appendOptions'=>[
+                                'class'=>function($model) { return !$model->categories ? 'disabled' : ''; }
+                            ]
+                        ],
+                        'products' => [
+                            'url'=> function(Category $model) { return \yii\helpers\Url::to(['product/index?category_id='.$model->category_id]); },
+                            'content'=>'<i class="fa fa-shopping-cart"></i>',
+                            'class'=>'btn btn-sm btn-default',
+                            'appendOptions'=>[
+                                'class'=>function($model) { return !$model->products ? 'disabled' : ''; }
+                            ]
+                        ]
                     ]
                 ],
             ],

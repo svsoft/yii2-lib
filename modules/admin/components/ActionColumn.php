@@ -45,6 +45,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                 'content' => '<i class="glyphicon glyphicon-trash"></i>',
                 'title' => Yii::t('app', 'Delete'),
                 'options' => [
+                    'data-method' => 'post',
                     'data-action' => 'delete',
                 ],
                 'appendOptions'=>[

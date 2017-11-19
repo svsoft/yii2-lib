@@ -7,6 +7,7 @@ use kartik\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model svsoft\yii\modules\catalog\models\Category */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $categories svsoft\yii\modules\catalog\models\Category[] */
 ?>
 
 <div class="catalog-category-form box box-primary">
@@ -32,7 +33,7 @@ use kartik\widgets\ActiveForm;
 
     </div>
     <div class="box-footer">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success btn-flat']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

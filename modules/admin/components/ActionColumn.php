@@ -39,7 +39,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                 ],
 
             ],
-            'delete'=>
+            'delete' =>
             [
                 'url' => 'delete',
                 'content' => '<i class="glyphicon glyphicon-trash"></i>',
@@ -47,6 +47,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                 'options' => [
                     'data-method' => 'post',
                     'data-action' => 'delete',
+                    'data-confirm' => 'Вы хотите удалить?',
                 ],
                 'appendOptions'=>[
                     'class'=>'btn-danger'

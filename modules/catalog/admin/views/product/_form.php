@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model svsoft\yii\modules\catalog\models\Product */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $categories svsoft\yii\modules\catalog\models\Category[] */
 ?>
 
 <div class="product-form box box-primary">
@@ -37,7 +38,7 @@ use yii\widgets\ActiveForm;
 
     </div>
     <div class="box-footer">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success btn-flat']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

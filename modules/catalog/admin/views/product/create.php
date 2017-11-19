@@ -1,14 +1,11 @@
 <?php
 
-use yii\helpers\Html;
-
 
 /* @var $this yii\web\View */
 /* @var $model svsoft\yii\modules\catalog\models\Product */
+/* @var $category \svsoft\yii\modules\catalog\models\Category */
+/* @var $categories svsoft\yii\modules\catalog\models\Category[] */
 
-$this->title = 'Create Product';
-$this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="product-create">
 

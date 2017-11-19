@@ -97,7 +97,9 @@ class Category extends \yii\db\ActiveRecord
             'slug' => 'Код',
             'images' => 'Картинка',
             'active' => 'Активность',
-            'sort' => 'Сортировка'
+            'sort' => 'Сортировка',
+            'created' => 'Дата создания',
+            'updated' => 'Дата обновления',
         ];
     }
 

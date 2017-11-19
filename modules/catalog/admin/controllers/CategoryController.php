@@ -2,15 +2,11 @@
 
 namespace svsoft\yii\modules\catalog\admin\controllers;
 
-use svsoft\yii\modules\main\files\FileAttributeHelper;
-use svsoft\yii\modules\main\files\models\UploadForm;
-use svsoft\yii\modules\catalog\CatalogModule;
+use svsoft\yii\modules\catalog\models\CategorySearch;
 use svsoft\yii\modules\catalog\components\CatalogHelper;
 use svsoft\yii\modules\properties\admin\actions\PropertiesAction;
 use Yii;
 use svsoft\yii\modules\catalog\models\Category;
-use yii\data\ActiveDataProvider;
-use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -22,6 +18,14 @@ use yii\web\UploadedFile;
  */
 class CategoryController extends Controller
 {
+
+    public function init()
+    {
+        parent::init();
+
+        Yii::$app->breadcrumbs->addItem('Каталог', ['category/index']);
+    }
+
     /**
      * @inheritdoc
      */
@@ -53,26 +57,50 @@ class CategoryController extends Controller
     }
 
     /**
+     * @param $category Category|int
+     */
+    public function addCategoryChain($category)
+    {
+        if (!$category)
+            return;
+
+        if (!($category instanceof Category))
+            $category = $this->findModel($category);
+
+        $chain = $category->getParentChain();
+        foreach($chain as $item)
+            Yii::$app->breadcrumbs->addItem($item->name, ['category/index', 'parent_id'=>$item->category_id]);
+    }
+
+    /**
      * Lists all Category models.
      * @return mixed
      */
     public function actionIndex($parent_id = null)
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Category::find(),
-        ]);
+        $searchModel = new CategorySearch();
+        $searchModel->parent_id = $parent_id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $dataProvider->query->andWhere(['parent_id'=>$parent_id]);
+        $category = $parent_id ? $this->findModel($parent_id) : null;
 
-        $parent = null;
-        if ($parent_id)
-            $parent = $this->findModel($parent_id);
+        if ($category)
+        {
+            $this->addCategoryChain($category);
+            Yii::$app->breadcrumbs->addItem($category->name);
+            $this->view->title = $category->name;
+        }
+        else
+        {
+            $this->view->title = 'Каталог';
+        }
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'parentChain' => $this->getParentChain($parent),
-            'parent' => $parent,
-            'parent_id'=>$parent_id
+            'searchModel' => $searchModel,
+            'parent' => $category,
+            'parent_id'=>$parent_id,
+            'extendedMode'=>Yii::$app->request->get('extendedMode')
         ]);
     }
 
@@ -106,8 +134,16 @@ class CategoryController extends Controller
             $model->getUploadForm()->uploadedFiles = UploadedFile::getInstances($model->getUploadForm(), 'uploadedFiles');
 
             if ($model->save())
-                return $this->redirect(['view', 'id' => $model->category_id]);
+            {
+                Yii::$app->session->setFlash('success', 'Категория: «' . $model->name . '» добавлена!');
+                return $this->redirect(['category/index', 'parent_id' => $model->parent_id]);
+            }
+
         }
+
+        $this->addCategoryChain($model);
+        Yii::$app->breadcrumbs->addItem('Добавление категории');
+        $this->view->title = 'Добавление категории';
 
         return $this->render('create', [
             'model' => $model,
@@ -137,11 +173,14 @@ class CategoryController extends Controller
 
             if ($model->save())
             {
-                $modelUploadForm->save();
-
-                return $this->redirect(['view', 'id' => $model->category_id]);
+                Yii::$app->session->setFlash('success', 'Категория: «' . $model->name . '» Сохранена!');
+                return $this->redirect(['category/index', 'parent_id' => $model->parent_id]);
             }
         }
+
+        $this->addCategoryChain($model);
+        Yii::$app->breadcrumbs->addItem($model->name . ' - редактирование');
+        $this->view->title = 'Редактирование категории: ' . $model->name;
 
         return $this->render('update', [
             'model' => $model,
@@ -157,9 +196,16 @@ class CategoryController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        if (!$model->delete())
+        {
+            Yii::$app->session->setFlash('error', $model->getFirstError('beforeDelete'));
+            return $this->redirect(Yii::$app->request->referrer);
+        }
 
-        return $this->redirect(['index']);
+        Yii::$app->session->setFlash('success', 'Категория: «' . $model->name . '» удалена!');
+
+        return $this->redirect(['index','parent_id'=>$model->parent_id]);
     }
 
     /**

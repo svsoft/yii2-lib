@@ -22,4 +22,24 @@ class CatalogHelper extends Component
 
         return [null=>$root] + $categories;
     }
+
+//    static public function getCategoryTree($parentId = false, $root = 'Без категории')
+//    {
+//        $query = Category::find();
+//        if ($parentId !== false)
+//            $query->andWhere(['parent_id'=>$parentId]);
+//
+//        $query->orderBy(['slug_chain'=>'ASC']);
+//
+//        $models = $query->all();
+//
+//        foreach($models as $model)
+//        {
+//            $chain = explode('/', $model->slug_chain);
+//        }
+//
+//        var_dump($models);
+//
+//
+//    }
 }

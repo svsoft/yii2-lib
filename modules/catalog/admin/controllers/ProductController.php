@@ -5,10 +5,6 @@ namespace svsoft\yii\modules\catalog\admin\controllers;
 use svsoft\yii\modules\catalog\components\CatalogHelper;
 use svsoft\yii\modules\catalog\models\Category;
 use svsoft\yii\modules\properties\admin\actions\PropertiesAction;
-use svsoft\yii\modules\properties\models\data\Property;
-use svsoft\yii\modules\properties\models\forms\PropertyValueForm;
-use svsoft\yii\modules\properties\models\forms\types\FloatValue;
-use svsoft\yii\modules\properties\models\forms\types\StringValue;
 use Yii;
 use svsoft\yii\modules\catalog\models\Product;
 use svsoft\yii\modules\catalog\models\ProductSearch;
@@ -22,6 +18,12 @@ use yii\web\UploadedFile;
  */
 class ProductController extends Controller
 {
+
+    public function init()
+    {
+        parent::init();
+    }
+
     /**
      * @inheritdoc
      */
@@ -56,23 +58,36 @@ class ProductController extends Controller
      * Lists all Product models.
      * @return mixed
      */
-    public function actionIndex($category_id = false)
+    public function actionIndex($category_id = null)
     {
         $searchModel = new ProductSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $category = null;
-        if ($category_id !== false)
+        if ($category_id)
         {
-            $dataProvider->query->andWhere(['category_id' => $category_id]);
+            $searchModel->category_id = $category_id;
             $category = $this->findCategory($category_id);
+        }
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        if ($category)
+        {
+            $this->addCategoryChain($category);
+            Yii::$app->breadcrumbs->addItem($category->name . ', товары');
+            $this->view->title = $category->name . ', товары' ;
+        }
+        else
+        {
+            $this->view->title = 'Каталог, товары';
         }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'category_id' => $category_id,
             'category' => $category,
+            'category_id' => $category_id,
+            'extendedMode'=>Yii::$app->request->get('extendedMode')
         ]);
     }
 
@@ -107,8 +122,16 @@ class ProductController extends Controller
             $model->getUploadForm()->uploadedFiles = UploadedFile::getInstances($model->getUploadForm(), 'uploadedFiles');
 
             if ($model->save())
-                return $this->redirect(['view', 'id' => $model->product_id]);
+            {
+                Yii::$app->session->setFlash('success', 'Товар: «' . $model->name . '» добавлен!');
+                return $this->redirect(['product/index', 'category_id' => $model->category_id]);
+            }
         }
+
+        $this->addCategoryChain($model->category_id);
+        Yii::$app->breadcrumbs->addItem($model->category->name.', товары', ['product/index', 'category_id'=>$model->category_id]);
+        Yii::$app->breadcrumbs->addItem('Добавление товара');
+        $this->view->title = 'Добавление товара';
 
         return $this->render('create', [
             'model' => $model,
@@ -134,10 +157,16 @@ class ProductController extends Controller
             $model->getUploadForm()->uploadedFiles = UploadedFile::getInstances($model->getUploadForm(), 'uploadedFiles');
 
             if ($model->save())
-                return $this->redirect(['view', 'id' => $model->product_id]);
-
-            var_dump($model->errors);
+            {
+                Yii::$app->session->setFlash('success', 'Товар: «' . $model->name . '» сохранен!');
+                return $this->redirect(['product/index', 'category_id' => $model->category_id]);
+            }
         }
+
+        $this->addCategoryChain($model->category_id);
+        Yii::$app->breadcrumbs->addItem($model->category->name.', товары', ['product/index', 'category_id'=>$model->category_id]);
+        Yii::$app->breadcrumbs->addItem('Редактирование товара');
+        $this->view->title = 'Редактирование товара: ' . $model->name;
 
         return $this->render('update', [
             'model' => $model,
@@ -160,8 +189,9 @@ class ProductController extends Controller
             return $this->redirect(Yii::$app->request->referrer);
         }
 
+        Yii::$app->session->setFlash('success', 'Товар: «' . $model->name . '» удален!');
 
-        return $this->redirect(['index']);
+        return $this->redirect(['index','category_id'=>$model->category_id]);
     }
 
     /**
@@ -187,5 +217,21 @@ class ProductController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * @param $category Category
+     */
+    public function addCategoryChain($category)
+    {
+        if (!$category)
+            return;
+
+        if (!($category instanceof Category))
+            $category = $this->findCategory($category);
+
+        $chain = $category->getParentChain();
+        foreach($chain as $item)
+            Yii::$app->breadcrumbs->addItem($item->name, ['category/index', 'parent_id'=>$item->category_id]);
     }
 }

@@ -38,19 +38,20 @@ use svsoft\yii\modules\catalog\models\Category;
                 ],
                 [
                     'class'          => \svsoft\yii\modules\admin\components\ActionColumn::className(),
-                    'template'       => '<div class="btn-group btn-sm-group-3">{children}{products}{add-product}</div>',
+                    'template'       => '<div class="btn-group btn-sm-group-2">{children}{add-category}</div> <div class="btn-group btn-sm-group-2">{products}{add-product}</div>',
                     'buttonOptions' => ['class'=>'btn btn-info btn-sm'],
                     'contentOptions' => ['class'=>'format-action'],
                     'headerOptions' => ['class'=>'format-action'],
                     'buttons'        => [
-                        'add-product' => [
 
-                            'url'=> function(Category $model) { return \yii\helpers\Url::to(['product/create','category_id'=>$model->category_id], ['class' => 'btn btn-success btn-flat']); },
+                        'add-category' => [
+
+                            'url'=> function(Category $model) { return \yii\helpers\Url::to(['category/create','parent_id'=>$model->category_id], ['class' => 'btn btn-success btn-flat']); },
                             'content'=>'<i class="fa fa-plus"></i>',
                             'class'=>'btn btn-sm btn-default',
-                            'options'=>['title'=>'Добавить товар'],
+                            'options'=>['title'=>'Добавить подраздел'],
                             'appendOptions'=>[
-                                'class'=>function($model) { return $model->categories ? 'disabled' : ''; }
+                                'class'=>function($model) { return $model->products ? 'disabled' : ''; }
                             ]
                         ],
                         'children' => [
@@ -61,6 +62,16 @@ use svsoft\yii\modules\catalog\models\Category;
                             'options'=>['title'=>'Список категорий товаров'],
                             'appendOptions'=>[
                                 'class'=>function($model) { return $model->products ? 'disabled' : ''; }
+                            ]
+                        ],
+                        'add-product' => [
+
+                            'url'=> function(Category $model) { return \yii\helpers\Url::to(['product/create','category_id'=>$model->category_id], ['class' => 'btn btn-success btn-flat']); },
+                            'content'=>'<i class="fa fa-plus"></i>',
+                            'class'=>'btn btn-sm btn-default',
+                            'options'=>['title'=>'Добавить товар'],
+                            'appendOptions'=>[
+                                'class'=>function($model) { return $model->categories ? 'disabled' : ''; }
                             ]
                         ],
                         'products' => [
@@ -83,7 +94,10 @@ use svsoft\yii\modules\catalog\models\Category;
 
                 [
                     'attribute' => 'name',
-                    'format'=>'ntext',
+                    'format'=>'raw',
+                    'value' => function(Category $model){
+                                return Html::a($model->name, $model->products ? ['product/index', 'category_id'=>$model->category_id]  : ['category/index', 'parent_id'=>$model->category_id] ) ;
+                            },
                     'contentOptions' => ['class'=>'format-text'],
                     'headerOptions' => ['class'=>'format-text'],
                 ],

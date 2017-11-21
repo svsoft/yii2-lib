@@ -7,9 +7,9 @@
 
 return [
     'adminMenu'=>[
-        ['label' => 'Каталог', 'icon' => 'list-alt', 'url' => '#', 'items'=>[
-            ['label' => 'Категории', 'icon' => 'folder-o', 'url' => ['/admin/catalog/category/index']],
-            ['label' => 'Товары', 'icon' => 'shopping-cart', 'url' => ['/admin/catalog/product/index']],
+        ['label' => 'Каталог товаров', 'icon' => 'list-alt', 'url' => '#', 'items'=>[
+            ['label' => 'Каталог', 'icon' => 'folder-o', 'url' => ['/admin/catalog/category/index']],
+            ['label' => 'Все товары', 'icon' => 'shopping-cart', 'url' => ['/admin/catalog/product/index']],
         ]],
     ]
 ];

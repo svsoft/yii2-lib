@@ -23,23 +23,40 @@ class CatalogHelper extends Component
         return [null=>$root] + $categories;
     }
 
-//    static public function getCategoryTree($parentId = false, $root = 'Без категории')
-//    {
-//        $query = Category::find();
-//        if ($parentId !== false)
-//            $query->andWhere(['parent_id'=>$parentId]);
-//
-//        $query->orderBy(['slug_chain'=>'ASC']);
-//
-//        $models = $query->all();
-//
-//        foreach($models as $model)
-//        {
-//            $chain = explode('/', $model->slug_chain);
-//        }
-//
-//        var_dump($models);
-//
-//
-//    }
+    /**
+     * Получает список категорий со структурой
+     *
+     * @param null $parentId
+     * @param string $root
+     *
+     * @return array
+     */
+    static public function getCategoryListWithStructure($parentId = null, $root = '-Каталог-')
+    {
+        $categories = Category::findAllWithChildren();
+
+        $list = [];
+        Category::walkTree($categories, function (Category $category, $key, $index, $count) use (&$list)  {
+
+            $level = $category->getLevel();
+
+            $char = '';
+            if ($level)
+            {
+                $char = str_repeat('│ ', $level - 1);
+
+                if ($index == $count-1)
+                    $char .= '└−';
+                else
+                    $char .= '├−';
+            }
+
+            $list[$category->category_id] = $char . $category->name;
+        });
+
+        if (!$root)
+            return $list;
+
+        return [null=>$root] + $list;
+    }
 }

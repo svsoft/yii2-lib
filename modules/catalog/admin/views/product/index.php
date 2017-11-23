@@ -63,7 +63,7 @@ use yii\helpers\Url;
                     'contentOptions' => ['class'=>'format-text'],
                     'headerOptions' => ['class'=>'format-text'],
                     'visible' => !$category_id,
-                    'filter' => \svsoft\yii\modules\catalog\components\CatalogHelper::getCategoryList(false, ''),
+                    'filter' => \svsoft\yii\modules\catalog\components\CatalogHelper::getCategoryListWithStructure(null, false),
                 ],
                 [
                     'attribute' => 'slug',

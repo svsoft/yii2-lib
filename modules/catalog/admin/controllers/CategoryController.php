@@ -7,7 +7,6 @@ use svsoft\yii\modules\catalog\components\CatalogHelper;
 use svsoft\yii\modules\properties\admin\actions\PropertiesAction;
 use Yii;
 use svsoft\yii\modules\catalog\models\Category;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -124,7 +123,7 @@ class CategoryController extends Controller
     public function actionCreate($parent_id = null)
     {
         $model = new Category();
-        $categories = CatalogHelper::getCategoryList(false);
+        $categories = CatalogHelper::getCategoryListWithStructure();
 
         $model->parent_id = $parent_id;
 
@@ -161,8 +160,7 @@ class CategoryController extends Controller
     {
         $model = $this->findModel($id);
 
-        $categories = CatalogHelper::getCategoryList(false);
-        unset($categories[$id]);
+        $categories = CatalogHelper::getCategoryListWithStructure();
 
         $modelUploadForm = $model->getUploadForm();
 
@@ -197,6 +195,13 @@ class CategoryController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+
+        if ($model->products || $model->categories)
+        {
+            Yii::$app->session->setFlash('error', '');
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+
         if (!$model->delete())
         {
             Yii::$app->session->setFlash('error', $model->getFirstError('beforeDelete'));
@@ -222,25 +227,5 @@ class CategoryController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-    /**
-     * Получает цепочку родительских категорий, и добавляет корневую
-     *
-     * @param $model Category
-     *
-     * @return array
-     */
-    public function getParentChain($model)
-    {
-        $parents = [];
-        if ($model)
-        {
-            $root = new Category(['name'=>'Каталог']);
-            $parents = [''=>$root];
-            ArrayHelper::merge($parents, $model->getParentChain());
-        }
-
-        return $parents;
     }
 }

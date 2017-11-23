@@ -112,7 +112,7 @@ class ProductController extends Controller
     {
         $model = new Product();
 
-        $categories = CatalogHelper::getCategoryList(false);
+        $categories = CatalogHelper::getCategoryListWithStructure(null, false);
 
         $model->category_id = $category_id;
 
@@ -149,7 +149,7 @@ class ProductController extends Controller
     {
         $model = $this->findModel($id);
 
-        $categories = CatalogHelper::getCategoryList(false);
+        $categories = CatalogHelper::getCategoryListWithStructure(null, false);
 
         if ($model->load(Yii::$app->request->post()))
         {

@@ -11,6 +11,7 @@ use svsoft\yii\traits\SluggableTrait;
 use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "catalog_category".
@@ -56,7 +57,25 @@ class Category extends \yii\db\ActiveRecord
             [['images'], 'string'],
             [['name', 'slug'], 'string', 'max' => 255],
             [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['parent_id' => 'category_id']],
+            [['parent_id'], 'parentValidator'],
         ];
+    }
+
+    /**
+     * Проверяет чтоб parent_id не был дочерним и текущим элементами
+     */
+    public function parentValidator()
+    {
+        $this->category_id;
+
+        $categories = static::findAllChildren($this->category_id);
+
+        $ids = array_keys($categories);
+
+        $ids[] = $this->category_id;
+
+        if (in_array($this->parent_id, $ids))
+            $this->addError('parent_id', 'Не допустимая родительская категория');
     }
 
     public function behaviors()
@@ -119,6 +138,17 @@ class Category extends \yii\db\ActiveRecord
         return true;
     }
 
+    /**
+     * Обновляет slug_chain
+     *
+     * @return int
+     */
+    public function updateSlugChain()
+    {
+        $this->fillSlugChain();
+        return $this->updateAttributes(['slug_chain']);
+    }
+
     public function afterValidate()
     {
         parent::afterValidate();
@@ -126,6 +156,21 @@ class Category extends \yii\db\ActiveRecord
         // Добавляем ошибки от slug_chain в slug
         if ($this->getFirstError('slug_chain'))
             $this->addError('slug', $this->getFirstError('slug_chain'));
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (!$insert)
+        {
+            // Если поменяося родитель, то обновляем slug_chain для все хочерних элементов
+            if ($changedAttributes['parent_id'] != $this->parent_id)
+            {
+                foreach($this->getAllChildren() as $category)
+                    $category->updateSlugChain();
+            }
+        }
+
+        parent::afterSave($insert, $changedAttributes);
     }
 
     public function fillSlugChain()
@@ -214,5 +259,117 @@ class Category extends \yii\db\ActiveRecord
         $chain[$this->category_id] = $this;
 
         return $chain;
+    }
+
+    public function getLevel()
+    {
+        return strlen($this->slug_chain) - strlen(str_replace('/','',$this->slug_chain));
+    }
+
+    public function getAllChildren()
+    {
+        $this->categories;
+        return self::getListCategories($this->categories);
+    }
+
+
+    /**
+     * Получает все категории совсеми дочерними элементами
+     *
+     * @param null $parentId
+     * @param null $queryCallback
+     *
+     * @return Category[]
+     */
+    static function findAllWithChildren($parentId = null, $queryCallback = null)
+    {
+        $query = static::find()->where(['parent_id'=>$parentId])->orderBy(['name'=>SORT_ASC])->indexBy('category_id');
+
+        if ($queryCallback instanceof \Closure)
+        {
+            call_user_func($queryCallback, $query);
+        }
+
+        $categories = $query->all();
+
+        $categoryIds = array_keys($categories);
+
+        if ($categoryIds)
+        {
+            $children = self::findAllWithChildren($categoryIds);
+            $childrenGroupByParent = [];
+            foreach($children as $child)
+            {
+                $childrenGroupByParent[$child->parent_id][] = $child;
+            }
+
+            foreach($childrenGroupByParent as $parentId=>$items)
+            {
+                $categories[$parentId]->populateRelation('categories', $items);
+            }
+        }
+
+        return $categories;
+    }
+
+    /**
+     * Получает все дочернии категории единым одномерным смассивом
+     *
+     * @param null $parentId
+     *
+     * @return array|Category[]
+     */
+    static function findAllChildren($parentId = null)
+    {
+        if (!$parentId)
+            return static::find()->all();
+
+        $categories = static::findAllWithChildren($parentId);
+        $return = [];
+        Category::walkTree($categories, function (Category $category) use (&$return)  {
+            $return[$category->category_id] = $category;
+        });
+
+        return $return;
+    }
+
+    /**
+     * Обходит дерево категорий
+     *
+     * @param $categories Category[]
+     * @param $callback - функция обработчик каждого узла дерева
+     */
+    static function walkTree($categories, $callback)
+    {
+        $i = 0;
+        $count = count($categories);
+        foreach($categories as $key=>$category)
+        {
+            call_user_func($callback, $category, $key, $i, $count );
+            if ($category->categories)
+                self::walkTree($category->categories, $callback);
+            $i++;
+        }
+    }
+
+    /**
+     * Принемает список родительских категорий, для которых получает список всех дочерних и возвращает все одномерным массивом
+     *
+     * @param $categories
+     *
+     * @return Category[]
+     */
+    static function getListCategories($categories)
+    {
+        $return = [];
+        foreach($categories as $category)
+        {
+            $return[$category->category_id] = $category;
+
+            if ($category->categories)
+                $return  = ArrayHelper::merge($return, self::getListCategories($category->categories));
+        }
+
+        return $return;
     }
 }

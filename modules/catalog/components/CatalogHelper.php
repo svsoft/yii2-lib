@@ -33,10 +33,8 @@ class CatalogHelper extends Component
      */
     static public function getCategoryListWithStructure($parentId = null, $root = '-Каталог-')
     {
-        $categories = Category::findAllWithChildren();
-
         $list = [];
-        Category::walkTree($categories, function (Category $category, $key, $index, $count) use (&$list)  {
+        Category::root()->walkChildren(function (Category $category, $key, $index, $count) use (&$list)  {
 
             $level = $category->getLevel();
 

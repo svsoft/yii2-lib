@@ -11,7 +11,6 @@ use svsoft\yii\traits\SluggableTrait;
 use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
-use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "catalog_category".
@@ -68,7 +67,7 @@ class Category extends \yii\db\ActiveRecord
     {
         $this->category_id;
 
-        $categories = static::findAllChildren($this->category_id);
+        $categories = $this->getAllChildren();
 
         $ids = array_keys($categories);
 
@@ -266,72 +265,6 @@ class Category extends \yii\db\ActiveRecord
         return strlen($this->slug_chain) - strlen(str_replace('/','',$this->slug_chain));
     }
 
-    public function getAllChildren()
-    {
-        $this->categories;
-        return self::getListCategories($this->categories);
-    }
-
-
-    /**
-     * Получает все категории совсеми дочерними элементами
-     *
-     * @param null $parentId
-     * @param null $queryCallback
-     *
-     * @return Category[]
-     */
-    static function findAllWithChildren($parentId = null, $queryCallback = null)
-    {
-        $query = static::find()->where(['parent_id'=>$parentId])->orderBy(['name'=>SORT_ASC])->indexBy('category_id');
-
-        if ($queryCallback instanceof \Closure)
-        {
-            call_user_func($queryCallback, $query);
-        }
-
-        $categories = $query->all();
-
-        $categoryIds = array_keys($categories);
-
-        if ($categoryIds)
-        {
-            $children = self::findAllWithChildren($categoryIds);
-            $childrenGroupByParent = [];
-            foreach($children as $child)
-            {
-                $childrenGroupByParent[$child->parent_id][] = $child;
-            }
-
-            foreach($childrenGroupByParent as $parentId=>$items)
-            {
-                $categories[$parentId]->populateRelation('categories', $items);
-            }
-        }
-
-        return $categories;
-    }
-
-    /**
-     * Получает все дочернии категории единым одномерным смассивом
-     *
-     * @param null $parentId
-     *
-     * @return array|Category[]
-     */
-    static function findAllChildren($parentId = null)
-    {
-        if (!$parentId)
-            return static::find()->all();
-
-        $categories = static::findAllWithChildren($parentId);
-        $return = [];
-        Category::walkTree($categories, function (Category $category) use (&$return)  {
-            $return[$category->category_id] = $category;
-        });
-
-        return $return;
-    }
 
     /**
      * Обходит дерево категорий
@@ -339,7 +272,7 @@ class Category extends \yii\db\ActiveRecord
      * @param $categories Category[]
      * @param $callback - функция обработчик каждого узла дерева
      */
-    static function walkTree($categories, $callback)
+    protected static function walkChildrenRecursively($categories, $callback)
     {
         $i = 0;
         $count = count($categories);
@@ -347,29 +280,81 @@ class Category extends \yii\db\ActiveRecord
         {
             call_user_func($callback, $category, $key, $i, $count );
             if ($category->categories)
-                self::walkTree($category->categories, $callback);
+                self::walkChildrenRecursively($category->categories, $callback);
             $i++;
         }
     }
 
     /**
-     * Принемает список родительских категорий, для которых получает список всех дочерних и возвращает все одномерным массивом
+     * Обходит дерево категорий
      *
-     * @param $categories
-     *
-     * @return Category[]
+     * @param $callback - функция обработчик каждого узла дерева
      */
-    static function getListCategories($categories)
+    public function walkChildren($callback)
+    {
+        return self::walkChildrenRecursively($this->categories, $callback);
+    }
+
+    /**
+     * Получает все дочернии категории единым одномерным массивом
+     *
+     * @return array|Category[]
+     */
+    public function getAllChildren()
     {
         $return = [];
-        foreach($categories as $category)
-        {
+        $this->walkChildren(function (self $category) use(&$return) {
             $return[$category->category_id] = $category;
-
-            if ($category->categories)
-                $return  = ArrayHelper::merge($return, self::getListCategories($category->categories));
-        }
+        });
 
         return $return;
+    }
+
+//    /**
+//     * Получает все категории совсеми дочерними элементами
+//     *
+//     * @param null $parentId
+//     * @param null $queryCallback
+//     *
+//     * @return Category[]
+//     */
+//    static function findAllWithChildren($parentId = null, $queryCallback = null)
+//    {
+//        $query = static::find()->where(['parent_id'=>$parentId])->orderBy(['name'=>SORT_ASC])->indexBy('category_id');
+//
+//        if ($queryCallback instanceof \Closure)
+//        {
+//            call_user_func($queryCallback, $query);
+//        }
+//
+//        $categories = $query->all();
+//
+//        $categoryIds = array_keys($categories);
+//
+//        if ($categoryIds)
+//        {
+//            $children = self::findAllWithChildren($categoryIds);
+//            $childrenGroupByParent = [];
+//            foreach($children as $child)
+//            {
+//                $childrenGroupByParent[$child->parent_id][] = $child;
+//            }
+//
+//            foreach($childrenGroupByParent as $parentId=>$items)
+//            {
+//                $categories[$parentId]->populateRelation('categories', $items);
+//            }
+//        }
+//
+//        return $categories;
+//    }
+
+    static function root()
+    {
+        $category = new Category(['category_id'=>null, 'parent_id' => null]);
+
+        $category->populateRelation('categories', static::findAll(['parent_id'=>null]));
+
+        return $category;
     }
 }

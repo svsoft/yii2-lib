@@ -11,6 +11,7 @@ use svsoft\yii\traits\SluggableTrait;
 use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "catalog_category".
@@ -265,7 +266,51 @@ class Category extends \yii\db\ActiveRecord
         return strlen($this->slug_chain) - strlen(str_replace('/','',$this->slug_chain));
     }
 
+    /**
+     * @return bool
+     */
+    public function deleteCascade()
+    {
+        $transaction = Yii::$app->db->beginTransaction();
 
+        // Удаляем все под категории
+        if ($this->categories)
+        {
+            foreach($this->categories as $category)
+            {
+                if (!$category->deleteCascade())
+                {
+                    $transaction->rollBack();
+                    return false;
+                }
+            }
+        }
+
+        // Удалем все товары
+        if ($this->products)
+        {
+            foreach($this->products as $product)
+            {
+                ///$product->on(ActiveRecord::EVENT_BEFORE_DELETE, function(ModelEvent $event){ var_dump('Товар удален'); $event->isValid = false; });
+                if (!$product->delete())
+                {
+                    $transaction->rollBack();
+                    return false;
+                }
+            }
+        }
+
+        // $this->on(ActiveRecord::EVENT_BEFORE_DELETE, function(ModelEvent $event){ var_dump('Категория удалена'); $event->isValid = false; });
+        if (!$this->delete())
+        {
+            $transaction->rollBack();
+            return false;
+        }
+
+        $transaction->commit();
+
+        return true;
+    }
     /**
      * Обходит дерево категорий
      *

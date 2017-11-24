@@ -214,6 +214,28 @@ class CategoryController extends Controller
     }
 
     /**
+     * Удаляет категорию каскадно
+     *
+     * @param $id
+     *
+     * @return \yii\web\Response
+     */
+    public function actionDeleteCascade($id)
+    {
+        $model = $this->findModel($id);
+
+        if (!$model->deleteCascade())
+        {
+            Yii::$app->session->setFlash('error', 'Ошибка удаления!');
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+
+        Yii::$app->session->setFlash('success', 'Категория: «' . $model->name . '» удалена  со всеми подкатегориями и товарами!');
+
+        return $this->redirect(['index','parent_id'=>$model->parent_id]);
+    }
+
+    /**
      * Finds the Category model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id

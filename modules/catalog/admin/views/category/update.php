@@ -8,7 +8,7 @@
 <div class="catalog-category-update">
 
     <?=$this->render('_update_menu', ['model' => $model])?>
-
+    
     <?= $this->render('_form', [
         'model' => $model,
         'categories' => $categories,

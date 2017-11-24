@@ -11,6 +11,13 @@ use kartik\widgets\ActiveForm;
 ?>
 
 <div class="catalog-category-form box box-primary">
+
+    <div class="box-header with-border">
+        <? if ($model->category_id):?>
+            <?= Html::a('Удалить', ['category/delete-cascade', 'id'=>$model->category_id], ['class' => 'btn btn-danger btn-flat']) ?>
+        <? endif;?>
+    </div>
+
     <?php $form = ActiveForm::begin([]); ?>
     <div class="box-body table-responsive">
 

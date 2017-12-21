@@ -38,7 +38,6 @@
 
         <?= svsoft\yii\modules\admin\widgets\Menu::widget(
             [
-                'options' => ['class' => 'sidebar-menu'],
                 'items' => [
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
                 ],

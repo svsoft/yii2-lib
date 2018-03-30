@@ -5,7 +5,6 @@ namespace svsoft\yii\modules\shop\models;
 use svsoft\yii\modules\catalog\models\Product;
 use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
 use svsoft\yii\modules\properties\traits\PropertiesTrait;
-use Yii;
 use yii\base\Exception;
 use yii\behaviors\TimestampBehavior;
 
@@ -106,12 +105,12 @@ class CartItem extends \yii\db\ActiveRecord
         return $this->hasOne(Product::className(), ['product_id' => 'product_id']);
     }
 
-
     /**
      * Связывает товар в козине с заказом и сохраняет в БД
      *
      * @param Order $order
      *
+     * @return bool
      * @throws Exception
      */
     public function linkOrder(Order $order)
@@ -124,7 +123,7 @@ class CartItem extends \yii\db\ActiveRecord
 
         $this->order_id = $order->order_id;
 
-        $this->save(false);
+        return $this->save(false);
     }
 
 }

@@ -6,6 +6,7 @@ use svsoft\yii\modules\properties\behaviors\PropertiesBehavior;
 use svsoft\yii\modules\properties\traits\PropertiesTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\Transaction;
 
 /**
  * This is the model class for table "shop_order".
@@ -36,6 +37,11 @@ class Order extends \yii\db\ActiveRecord
      * @var CartItem[]
      */
     public $addCartItems;
+
+    /**
+     * @var Transaction
+     */
+    public $transaction;
 
     /**
      * @inheritdoc
@@ -116,12 +122,44 @@ class Order extends \yii\db\ActiveRecord
     }
 
 
+    /**
+     * Обертывает в транзакцию
+     *
+     * @param bool $runValidation
+     * @param null $attributeNames
+     *
+     * @return bool
+     */
+    public function save($runValidation = true, $attributeNames = null)
+    {
+        $this->transaction = Yii::$app->db->beginTransaction();
+
+        if (!parent::save($runValidation, $attributeNames))
+        {
+            $this->transaction->rollBack();
+            return false;
+        }
+
+        if (!$this->transaction->getIsActive())
+            return false;
+
+        $this->transaction->commit();
+
+        return true;
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
 
         foreach($this->cartItems as $cartItem)
-            $cartItem->linkOrder($this);
+        {
+            if (!$cartItem->linkOrder($this))
+            {
+                $this->transaction->rollBack();
+                return;
+            }
+        }
     }
 
     public function beforeDelete()
@@ -131,6 +169,27 @@ class Order extends \yii\db\ActiveRecord
 
         foreach($this->cartItems as $cartItem)
             $cartItem->delete();
+
+        return true;
+    }
+
+    /**
+     * Обертываем в транзакцию
+     *
+     * @return bool
+     */
+    public function delete()
+    {
+        $this->transaction = Yii::$app->db->beginTransaction();
+
+        if (!parent::delete())
+        {
+            $this->transaction->rollBack();
+            return false;
+        }
+
+        if ($this->transaction->isActive)
+            $this->transaction->commit();
 
         return true;
     }

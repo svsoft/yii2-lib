@@ -40,7 +40,8 @@ trait PropertiesTrait
     public function getPropertyObjectRelation()
     {
         $modelType = self::getModelType();
-        return $this->hasOne(PropertyObject::class, ['model_id'=>$this::primaryKey()[0]])->andWhere(['model_type_id'=>$modelType->model_type_id]);
+        return $this->hasOne(PropertyObject::class, ['model_id'=>$this::primaryKey()[0]])
+            ->andWhere(['model_type_id'=>$modelType->model_type_id])->with('propertyValues')->with('linkedGroups');
     }
     /**
      * @return PropertyObject

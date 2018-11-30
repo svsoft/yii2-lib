@@ -295,7 +295,7 @@ class PropertyObject extends \yii\db\ActiveRecord
      */
     static function find()
     {
-        return \Yii::createObject(PropertyObjectQuery::className(), [get_called_class()])->with('propertyValues')->with('linkedGroups');
+        return \Yii::createObject(PropertyObjectQuery::className(), [get_called_class()]);
     }
 
     /**

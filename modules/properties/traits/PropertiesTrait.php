@@ -36,6 +36,12 @@ trait PropertiesTrait
      */
     static protected $modelType;
 
+
+    public function getPropertyObjectRelation()
+    {
+        $modelType = self::getModelType();
+        return $this->hasOne(PropertyObject::class, ['model_id'=>$this::primaryKey()[0]])->andWhere(['model_type_id'=>$modelType->model_type_id]);
+    }
     /**
      * @return PropertyObject
      *
@@ -43,6 +49,8 @@ trait PropertiesTrait
      */
     public function getPropertyObject()
     {
+        return $this->propertyObjectRelation;
+
         if ($this->propertyObject === null)
         {
             $modelType = self::getModelType();
@@ -204,9 +212,4 @@ trait PropertiesTrait
     {
         return $this->getPropertyObject()->addPropertyGroups($groups);
     }
-
-
-
-
-
 }

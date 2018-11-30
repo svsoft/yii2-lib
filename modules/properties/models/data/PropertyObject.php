@@ -295,7 +295,7 @@ class PropertyObject extends \yii\db\ActiveRecord
      */
     static function find()
     {
-        return \Yii::createObject(PropertyObjectQuery::className(), [get_called_class()]);
+        return \Yii::createObject(PropertyObjectQuery::className(), [get_called_class()])->with('propertyValues')->with('linkedGroups');
     }
 
     /**
@@ -339,7 +339,7 @@ class PropertyObject extends \yii\db\ActiveRecord
     public function getLinkedGroups()
     {
         return $this->hasMany(PropertyGroup::className(), ['group_id' => 'group_id'])
-            ->viaTable('property_object_group', ['object_id' => 'object_id'])->indexBy('group_id');
+            ->viaTable('property_object_group', ['object_id' => 'object_id'])->with('activeProperties')->indexBy('group_id');
     }
 
     public function getGroupsWithProperties()
@@ -353,7 +353,7 @@ class PropertyObject extends \yii\db\ActiveRecord
             }
             else
             {
-                $this->_groups = $this->getLinkedGroups()->with('activeProperties')->all();
+                $this->_groups = $this->linkedGroups;
             }
         }
 

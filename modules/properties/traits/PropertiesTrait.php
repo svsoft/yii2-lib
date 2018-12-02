@@ -40,9 +40,10 @@ trait PropertiesTrait
     public function getPropertyObjectRelation()
     {
         $modelType = self::getModelType();
-        return $this->hasOne(PropertyObject::class, ['model_id'=>$this::primaryKey()[0]])
-            ->andWhere(['model_type_id'=>$modelType->model_type_id])->with('propertyValues')->with('linkedGroups');
+        return $this->hasOne(PropertyObject::class, ['model_id' => $this::primaryKey()[0]])
+            ->andWhere(['model_type_id' => $modelType->model_type_id])->with('propertyValues')->with('linkedGroups');
     }
+
     /**
      * @return PropertyObject
      *
@@ -50,20 +51,18 @@ trait PropertiesTrait
      */
     public function getPropertyObject()
     {
-        return $this->propertyObjectRelation;
-
-        if ($this->propertyObject === null)
+        if($this->propertyObject === null)
         {
-            $modelType = self::getModelType();
-
-            $modelId = $this->getModelId();
-
-            $attributes = ['model_id' => $modelId, 'model_type_id' => $modelType->model_type_id];
-
-            $this->propertyObject = PropertyObject::findOne($attributes);
+            $this->propertyObject = $this->propertyObjectRelation;
 
             if(!$this->propertyObject)
             {
+                $modelType = self::getModelType();
+
+                $modelId = $this->getModelId();
+
+                $attributes = ['model_id' => $modelId, 'model_type_id' => $modelType->model_type_id];
+
                 $this->propertyObject = new PropertyObject($attributes);
                 // $this->propertyObject
             }
@@ -83,20 +82,20 @@ trait PropertiesTrait
      */
     static public function getModelType()
     {
-        if (!static::$modelType)
+        if(!static::$modelType)
             static::$modelType = PropertyModelType::findOne(['class' => __CLASS__]);
 
-        if (!static::$modelType)
+        if(!static::$modelType)
         {
             $type = new PropertyModelType();
             $type->name = __CLASS__;
             $type->class = __CLASS__;
 
-            if ($type->save())
+            if($type->save())
                 static::$modelType = $type;
         }
 
-        if (!static::$modelType)
+        if(!static::$modelType)
             throw new Exception(__CLASS__ . ' is not found in PropertyModelType');
 
         return static::$modelType;
@@ -160,7 +159,7 @@ trait PropertiesTrait
      */
     static public function filterByProperties($properties, $query = null)
     {
-        if (!$properties)
+        if(!$properties)
             return $query;
 
         try
@@ -172,19 +171,19 @@ trait PropertiesTrait
 
         }
 
-        if (!$query)
-            $query = call_user_func_array([$modelType->class,'find'],[]);
+        if(!$query)
+            $query = call_user_func_array([$modelType->class, 'find'], []);
 
         // Получаем список ид объектов
         $queryPropertyObject = PropertyObject::find()->andProperty($properties);
 
-        $queryPropertyObject->andWhere([PropertyObject::tableName() . '.model_type_id'=>$modelType->model_type_id]);
+        $queryPropertyObject->andWhere([PropertyObject::tableName() . '.model_type_id' => $modelType->model_type_id]);
 
         $objects = $queryPropertyObject->indexBy('model_id')->select('property_object.model_id')->asArray()->all();
 
         $modelIdColumn = current(self::primaryKey());
 
-        $query->andWhere([$modelIdColumn=>array_keys($objects)]);
+        $query->andWhere([$modelIdColumn => array_keys($objects)]);
 
         return $query;
     }
@@ -200,8 +199,8 @@ trait PropertiesTrait
     {
         $attr = $this->getPropertiesBehavior()->nameAttribute;
 
-        if (!$attr)
-            throw new Exception('Property nameAttribute is not set in method '.get_class($this).'::behaviors() for PropertiesBehavior');
+        if(!$attr)
+            throw new Exception('Property nameAttribute is not set in method ' . get_class($this) . '::behaviors() for PropertiesBehavior');
 
         return $this->getAttribute($attr);
     }

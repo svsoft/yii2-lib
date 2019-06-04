@@ -2,6 +2,7 @@
 
 namespace svsoft\yii\modules\shop\admin\controllers;
 
+use svsoft\yii\modules\properties\admin\actions\PropertiesAction;
 use Yii;
 use svsoft\yii\modules\shop\models\CartItem;
 use svsoft\yii\modules\shop\models\CartItemSearch;
@@ -25,6 +26,20 @@ class CartController extends Controller
                 'actions' => [
                     'delete' => ['POST'],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        return [
+            'properties' => [
+                'class' => PropertiesAction::className(),
+                'view' => '@svs-shop/admin/views/cart/properties',
+                'modelClass' => CartItem::className(),
             ],
         ];
     }
